@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="Hospital.BL.PatientProfile.PatientPersonalInfo">
+    <Position X="1.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAg=</HashCode>
+      <FileName>PatientProfile\PatientPersonalInfo.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Hospital.BL.PatientCards.PatientCard">
+    <Position X="4.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>PatientCards\PatientCard.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Hospital.BL.PatientProfile.PatientProfile">
+    <Position X="8" Y="0.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAIAEAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>PatientProfile\PatientProfile.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

@@ -1,0 +1,220 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="BlogModel.Store" Alias="Self" Provider="System.Data.SqlClient" ProviderManifestToken="2008" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+  <EntityContainer Name="BlogModelStoreContainer">
+    <EntitySet Name="Messages" EntityType="BlogModel.Store.Messages" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="Users" EntityType="BlogModel.Store.Users" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="Blogs" EntityType="BlogModel.Store.Blogs" store:Type="Tables" Schema="dbo" />
+    <AssociationSet Name="UserBlog" Association="BlogModel.Store.UserBlog">
+      <End Role="User" EntitySet="Users" />
+      <End Role="Blog" EntitySet="Blogs" />
+    </AssociationSet>
+    <AssociationSet Name="BlogMessage" Association="BlogModel.Store.BlogMessage">
+      <End Role="Blog" EntitySet="Blogs" />
+      <End Role="Message" EntitySet="Messages" />
+    </AssociationSet>
+    <AssociationSet Name="UserMessage" Association="BlogModel.Store.UserMessage">
+      <End Role="User" EntitySet="Users" />
+      <End Role="Message" EntitySet="Messages" />
+    </AssociationSet>
+  </EntityContainer>
+  <EntityType Name="Messages">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Text" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="Blog_Id" Type="int" Nullable="false" />
+    <Property Name="Commentator_Id" Type="int" Nullable="false" />
+  </EntityType>
+  <EntityType Name="Users">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Login" Type="nvarchar(max)" Nullable="false" />
+  </EntityType>
+  <EntityType Name="Blogs">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Topic" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="Creator_Id" Type="int" Nullable="false" />
+  </EntityType>
+  <Association Name="UserBlog">
+    <End Role="User" Type="BlogModel.Store.Users" Multiplicity="1" />
+    <End Role="Blog" Type="BlogModel.Store.Blogs" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="User">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="Blog">
+        <PropertyRef Name="Creator_Id" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="BlogMessage">
+    <End Role="Blog" Type="BlogModel.Store.Blogs" Multiplicity="1" />
+    <End Role="Message" Type="BlogModel.Store.Messages" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Blog">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="Message">
+        <PropertyRef Name="Blog_Id" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="UserMessage">
+    <End Role="User" Type="BlogModel.Store.Users" Multiplicity="1" />
+    <End Role="Message" Type="BlogModel.Store.Messages" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="User">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="Message">
+        <PropertyRef Name="Commentator_Id" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+</Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema xmlns="http://schemas.microsoft.com/ado/2009/11/edm" xmlns:cg="http://schemas.microsoft.com/ado/2006/04/codegeneration" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" Namespace="BlogModel" Alias="Self" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" annotation:UseStrongSpatialTypes="false">
+        <EntityContainer Name="BlogModelContainer" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="Messages" EntityType="BlogModel.Message" />
+          <EntitySet Name="Users" EntityType="BlogModel.User" />
+          <EntitySet Name="Blogs" EntityType="BlogModel.Blog" />
+          <AssociationSet Name="UserBlog" Association="BlogModel.UserBlog">
+            <End Role="User" EntitySet="Users" />
+            <End Role="Blog" EntitySet="Blogs" />
+          </AssociationSet>
+          <AssociationSet Name="BlogMessage" Association="BlogModel.BlogMessage">
+            <End Role="Blog" EntitySet="Blogs" />
+            <End Role="Message" EntitySet="Messages" />
+          </AssociationSet>
+          <AssociationSet Name="UserMessage" Association="BlogModel.UserMessage">
+            <End Role="User" EntitySet="Users" />
+            <End Role="Message" EntitySet="Messages" />
+          </AssociationSet>
+        </EntityContainer>
+        <EntityType Name="Message">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="String" Name="Text" Nullable="false" />
+          <NavigationProperty Name="Blog" Relationship="BlogModel.BlogMessage" FromRole="Message" ToRole="Blog" />
+          <NavigationProperty Name="Commentator" Relationship="BlogModel.UserMessage" FromRole="Message" ToRole="User" />
+        </EntityType>
+        <EntityType Name="User">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="String" Name="Login" Nullable="false" />
+          <NavigationProperty Name="Blogs" Relationship="BlogModel.UserBlog" FromRole="User" ToRole="Blog" />
+          <NavigationProperty Name="Messages" Relationship="BlogModel.UserMessage" FromRole="User" ToRole="Message" />
+        </EntityType>
+        <EntityType Name="Blog">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="String" Name="Topic" Nullable="false" />
+          <NavigationProperty Name="Creator" Relationship="BlogModel.UserBlog" FromRole="Blog" ToRole="User" />
+          <NavigationProperty Name="Messages" Relationship="BlogModel.BlogMessage" FromRole="Blog" ToRole="Message" />
+        </EntityType>
+        <Association Name="UserBlog">
+          <End Type="BlogModel.User" Role="User" Multiplicity="1" />
+          <End Type="BlogModel.Blog" Role="Blog" Multiplicity="*" />
+        </Association>
+        <Association Name="BlogMessage">
+          <End Type="BlogModel.Blog" Role="Blog" Multiplicity="1" />
+          <End Type="BlogModel.Message" Role="Message" Multiplicity="*" />
+        </Association>
+        <Association Name="UserMessage">
+          <End Type="BlogModel.User" Role="User" Multiplicity="1" />
+          <End Type="BlogModel.Message" Role="Message" Multiplicity="*" />
+        </Association>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+    <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+  <EntityContainerMapping StorageEntityContainer="BlogModelStoreContainer" CdmEntityContainer="BlogModelContainer">
+    <EntitySetMapping Name="Messages">
+      <EntityTypeMapping TypeName="IsTypeOf(BlogModel.Message)">
+        <MappingFragment StoreEntitySet="Messages">
+          <ScalarProperty Name="Id" ColumnName="Id" />
+          <ScalarProperty Name="Text" ColumnName="Text" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Users">
+      <EntityTypeMapping TypeName="IsTypeOf(BlogModel.User)">
+        <MappingFragment StoreEntitySet="Users">
+          <ScalarProperty Name="Id" ColumnName="Id" />
+          <ScalarProperty Name="Login" ColumnName="Login" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Blogs">
+      <EntityTypeMapping TypeName="IsTypeOf(BlogModel.Blog)">
+        <MappingFragment StoreEntitySet="Blogs">
+          <ScalarProperty Name="Id" ColumnName="Id" />
+          <ScalarProperty Name="Topic" ColumnName="Topic" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <AssociationSetMapping Name="UserBlog" TypeName="BlogModel.UserBlog" StoreEntitySet="Blogs">
+      <EndProperty Name="User">
+        <ScalarProperty Name="Id" ColumnName="Creator_Id" />
+      </EndProperty>
+      <EndProperty Name="Blog">
+        <ScalarProperty Name="Id" ColumnName="Id" />
+      </EndProperty>
+    </AssociationSetMapping>
+    <AssociationSetMapping Name="BlogMessage" TypeName="BlogModel.BlogMessage" StoreEntitySet="Messages">
+      <EndProperty Name="Blog">
+        <ScalarProperty Name="Id" ColumnName="Blog_Id" />
+      </EndProperty>
+      <EndProperty Name="Message">
+        <ScalarProperty Name="Id" ColumnName="Id" />
+      </EndProperty>
+    </AssociationSetMapping>
+    <AssociationSetMapping Name="UserMessage" TypeName="BlogModel.UserMessage" StoreEntitySet="Messages">
+      <EndProperty Name="User">
+        <ScalarProperty Name="Id" ColumnName="Commentator_Id" />
+      </EndProperty>
+      <EndProperty Name="Message">
+        <ScalarProperty Name="Id" ColumnName="Id" />
+      </EndProperty>
+    </AssociationSetMapping>
+  </EntityContainerMapping>
+</Mapping></edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <edmx:Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </edmx:Connection>
+    <edmx:Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="True" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </edmx:Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>

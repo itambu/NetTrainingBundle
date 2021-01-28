@@ -1,0 +1,32 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Demo17", "ConsoleApplication17\Demo17.csproj", "{5C62DE92-4E55-4E17-A76C-31AE172640D7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InetShop.BL", "InetShop.BL\InetShop.BL.csproj", "{B4AEF71C-E07E-4210-96DE-39C811704284}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InetShop.Entities", "InetShop.Entities\InetShop.Entities.csproj", "{951CE930-AB0D-49C0-9B33-FDEBE5CF96B2}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{5C62DE92-4E55-4E17-A76C-31AE172640D7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5C62DE92-4E55-4E17-A76C-31AE172640D7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5C62DE92-4E55-4E17-A76C-31AE172640D7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5C62DE92-4E55-4E17-A76C-31AE172640D7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B4AEF71C-E07E-4210-96DE-39C811704284}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B4AEF71C-E07E-4210-96DE-39C811704284}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B4AEF71C-E07E-4210-96DE-39C811704284}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B4AEF71C-E07E-4210-96DE-39C811704284}.Release|Any CPU.Build.0 = Release|Any CPU
+		{951CE930-AB0D-49C0-9B33-FDEBE5CF96B2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{951CE930-AB0D-49C0-9B33-FDEBE5CF96B2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{951CE930-AB0D-49C0-9B33-FDEBE5CF96B2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{951CE930-AB0D-49C0-9B33-FDEBE5CF96B2}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

@@ -1,0 +1,13 @@
+1. changes connection strings in app.config files both in console and service projects.
+   change source and destination (backup) folder in config files.
+2. rebuild
+3. ensure that config file named [servicename].[exe].config is in folder service\bin\debug contains connection string.
+   Any time when you change app.config in service project rebuild the project and reinstall service. 
+4. install service
+5. first run console app creates a database
+6. give owner permission for the database for user NT_AUTHORITY\SYSTEM (LOCALSYSTEM)
+7. start service and add csv file to source folder. It should be moved to destination folder. 
+   Destination should not contain the the same named file when you copy the file to source folder. 
+8. Stop service
+9. See the data in database
+

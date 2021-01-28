@@ -1,0 +1,123 @@
+﻿<Window x:Class="WpfApplication1.Window1"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:sys="clr-namespace:System;assembly=mscorlib"   
+    xmlns:me="clr-namespace:WpfApplication1" 
+        
+    Title="Window1" Height="430" Width="816">
+    <Grid Height="Auto" Width="Auto">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="234*" />
+            <ColumnDefinition Width="312*" />
+            <ColumnDefinition Width="248*" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="132*" />
+            <RowDefinition Height="134*" />
+            <RowDefinition Height="126*" />
+        </Grid.RowDefinitions>
+
+        <Button x:Name="button1" Click="button1_Click">
+            <Button.Tag>
+                <sys:Boolean>false</sys:Boolean>
+            </Button.Tag>
+            <MediaElement Source="F:\Movies\herculeses.mkv" LoadedBehavior="Manual" Stretch="Fill">
+                <MediaElement.LayoutTransform>
+                    <RotateTransform Angle="90">
+                    </RotateTransform>
+                </MediaElement.LayoutTransform>
+            </MediaElement>
+        </Button>
+
+        <Button x:Name="button2" Grid.Column="1" Click="button1_Click" >
+            <Button.Tag>
+                <sys:Boolean>false</sys:Boolean>
+            </Button.Tag>
+            <MediaElement Source="F:\Movies\hercules.mkv" LoadedBehavior="Manual" Stretch="Fill">
+            </MediaElement>
+        </Button>
+
+        <Button x:Name="button3" Click="button1_Click" Grid.Column="2">
+            <Button.Tag>
+                <sys:Boolean>false</sys:Boolean>
+            </Button.Tag>
+            <MediaElement Source="F:\Movies\hercules.mkv" LoadedBehavior="Manual" Stretch="Fill" MediaEnded="MediaElement_MediaEnded">
+                <MediaElement.LayoutTransform>
+                    <SkewTransform AngleX="10" AngleY="20"/>
+                </MediaElement.LayoutTransform>
+            </MediaElement>
+        </Button>
+
+        <Button x:Name="button4" Click="button1_Click" Grid.Column="0" Grid.Row="1">
+            <Button.Tag>
+                <sys:Boolean>false</sys:Boolean>
+            </Button.Tag>
+            <MediaElement Source="f:\Movies\13 убийц.HDRip.1400Mb.avi" LoadedBehavior="Manual" Stretch="Fill" MediaEnded="MediaElement_MediaEnded">
+                <MediaElement.LayoutTransform>
+                    <ScaleTransform ScaleX="0.8" ScaleY="1.2"/>
+                </MediaElement.LayoutTransform>
+            </MediaElement>
+        </Button>
+
+        <Button x:Name="button5" Click="button1_Click" Grid.Column="1" Grid.Row="1">
+            <Button.Tag>
+                <sys:Boolean>false</sys:Boolean>
+            </Button.Tag>
+            <MediaElement Source="f:\Movies\13 убийц.HDRip.1400Mb.avi" LoadedBehavior="Manual" Stretch="Fill" Margin="30,30,30,30">
+                <MediaElement.BitmapEffect>
+                    <DropShadowBitmapEffect Direction="45" Color="Black" ShadowDepth="25" Noise="0.2"/>
+                </MediaElement.BitmapEffect>
+            </MediaElement>
+        </Button>
+
+        <Button x:Name="button6" Click="button1_Click" Grid.Column="2" Grid.Row="1">
+            <Button.Tag>
+                <sys:Boolean>false</sys:Boolean>
+            </Button.Tag>
+            <MediaElement Source="f:\Movies\13 убийц.HDRip.1400Mb.avi" LoadedBehavior="Manual" Stretch="Fill">
+                <MediaElement.BitmapEffect>
+                    <BevelBitmapEffect BevelWidth="10" Smoothness="0.5"/>
+                </MediaElement.BitmapEffect>
+            </MediaElement>
+        </Button>
+
+        <Button x:Name="button7" Click="button1_Click" Grid.Column="0" Grid.Row="2">
+            <Button.Tag>
+                <sys:Boolean>false</sys:Boolean>
+            </Button.Tag>
+            <MediaElement Source="f:\Movies\13 убийц.HDRip.1400Mb.avi" LoadedBehavior="Manual" Stretch="Fill" Margin="10,10,10,10">
+                <MediaElement.BitmapEffect>
+                    <OuterGlowBitmapEffect Noise="0.4" GlowColor="DarkBlue" GlowSize="20"/>
+                </MediaElement.BitmapEffect>
+            </MediaElement>
+        </Button>
+
+        <Button x:Name="button8" Click="button1_Click" Grid.Column="1" Grid.Row="2">
+            <Button.Tag>
+                <sys:Boolean>false</sys:Boolean>
+            </Button.Tag>
+            <MediaElement Source="f:\Movies\13 убийц.HDRip.1400Mb.avi" LoadedBehavior="Manual" Stretch="Fill">
+                <MediaElement.BitmapEffect>
+                    <EmbossBitmapEffect LightAngle="45" Relief="0.9"/>
+                </MediaElement.BitmapEffect>
+            </MediaElement>
+        </Button>
+
+        <Button x:Name="button9" Click="button1_Click" Grid.Column="2" Grid.Row="2">
+            <Button.Tag>
+                <sys:Boolean>false</sys:Boolean>
+            </Button.Tag>
+            <MediaElement Source="f:\Movies\13 убийц.HDRip.1400Mb.avi" LoadedBehavior="Manual" Stretch="Fill">
+                <MediaElement.BitmapEffect>
+                    <BitmapEffectGroup>
+                        <EmbossBitmapEffect LightAngle="90" Relief="0.95"/>
+                        <BlurBitmapEffect KernelType="Box" Radius="7"/>
+                    </BitmapEffectGroup>
+                </MediaElement.BitmapEffect>
+                <MediaElement.RenderTransform>
+                    <TranslateTransform X="15" Y="20"/>
+                </MediaElement.RenderTransform>
+            </MediaElement>
+        </Button>
+    </Grid>
+</Window>
