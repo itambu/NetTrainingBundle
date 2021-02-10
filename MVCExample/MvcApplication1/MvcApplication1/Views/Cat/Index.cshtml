@@ -1,0 +1,73 @@
+﻿@model MvcApplication1.Models.Filters.CatFilter
+
+
+@using MvcApplication1.Models.Filters;
+@using PagedList.Mvc;
+@using PagedList;
+@using MvcApplication1.Models;
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" />
+<link href="~/Content/custom-rbtn.css" rel="stylesheet" type="text/css" />
+
+<h2>Welcome to cat's world!</h2>
+
+@Html.ActionLink("Create", "Create")
+
+
+
+<hr />
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+
+<fieldset>
+    <legend>CatFilter</legend>
+
+    <div class="editor-label">
+        @Html.LabelFor(model => model.Name)
+    </div>
+    <div class="editor-field">
+        @Html.EditorFor(model => model.Name)
+        @Html.ValidationMessageFor(model => model.Name)
+    </div>
+
+    <div id="filter-radio-button">
+    @foreach (var item in Enum.GetValues(typeof(TextFieldCriteria)))
+    {
+        <label class="custom-radio">
+            <input type="radio" name="NameCriteria" value="@item" @(Model.NameCriteria.ToString() == item.ToString() ? " checked=\"checked\"" : "")/>
+            <span>@item</span>
+        </label>
+    }
+        
+    </div>
+
+<p>
+    <input type="submit" value="Apply" />
+    <input id="clear" type="submit" value="Clear" />
+</p>
+</fieldset>
+}
+
+<hr />
+
+@Html.Partial("PartialViewCatList", ViewData[typeof(PagedList<Cat>).FullName])
+
+<script type="text/javascript">
+    $(document).ready(
+        function ()
+        {
+            $('#clear').click(
+                function () {
+                    $('#Name').val('');
+                }
+            );
+        });
+</script>

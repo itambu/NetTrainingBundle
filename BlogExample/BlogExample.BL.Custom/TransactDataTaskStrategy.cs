@@ -46,7 +46,7 @@ namespace BlogExample.BL.Custom
             base.Disposing();
         }
 
-        public void OnDataItemHandler(CustomLogicTaskContext taskContext)
+        protected void OnDataItemHandler(CustomLogicTaskContext taskContext)
         {
             DbContext context = ContextFactory.CreateInstance();
             try

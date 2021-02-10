@@ -14,7 +14,6 @@ namespace BlogExample.BL.LogicTaskContexts
         public Task Current { get; set; }
         public Exception Exception { get; set; }
         public IDataSource<TDataItem> DataSource { get; set; }
-
         public TDataItem DataItem { get; set; }
     }
 }

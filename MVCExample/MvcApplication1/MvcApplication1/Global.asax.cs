@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MvcApplication1.App_Start;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -25,6 +26,8 @@ namespace MvcApplication1
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
             AuthConfig.RegisterAuth();
+            ModelFilterConfig.RegisterModelFilter();
+            ModelFilterConfig.RegisterStorageRoutes();
         }
     }
 }

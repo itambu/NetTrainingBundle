@@ -1,4 +1,9 @@
-﻿using System;
+﻿using MvcApplication1.App_Start;
+using MvcApplication1.Infrastucture;
+using MvcApplication1.Models;
+using MvcApplication1.Models.Filters;
+using PagedList;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -11,9 +16,54 @@ namespace MvcApplication1.Controllers
         //
         // GET: /Cat/
 
-        public ActionResult Index()
+        static IList<Cat> catList = new List<Cat>()
         {
-            return View();
+            new Cat(){ Id = 1, Name= "first"},
+            new Cat(){ Id = 2, Name= "second"},
+            new Cat(){ Id = 3, Name= "third"},
+            new Cat(){ Id = 4, Name= "first"},
+            new Cat(){ Id = 5, Name= "second"},
+            new Cat(){ Id = 6, Name= "third"},
+            new Cat(){ Id = 7, Name= "first"},
+            new Cat(){ Id = 8, Name= "second"},
+            new Cat(){ Id = 9, Name= "third"},
+            new Cat(){ Id = 10, Name= "first"},
+            new Cat(){ Id = 11, Name= "second"},
+            new Cat(){ Id = 12, Name= "third"}
+        };
+
+        public ActionResult Index(int? page)
+        {
+            var config = new StorageRouter(this);
+
+            ModelFilter<Cat> filter = config.GetObject<CatFilter>();
+
+            if (filter == null)
+            {
+                filter = ModelFilterConfig.Factory.CreateInstance<Cat>();
+                config.SetObject(filter);
+            }
+            var query = filter.ToExpression();
+            var q = query != null ? catList.Where(query.Compile()) : catList;
+
+            var lastViewPage = page ?? 1;
+            config.SetObject<IPagedList<Cat>>(q.ToPagedList(lastViewPage, 10));
+
+            Session["LastViewCatPage"] = lastViewPage;
+
+            return View(filter);
+        }
+
+
+        [HttpPost]
+        public ActionResult Index(CatFilter filter)
+        {
+            if (TryValidateModel(filter))
+            {
+                var config = new StorageRouter(this);
+                config.SetObject(filter);
+            }
+            return RedirectToAction("Index");
         }
 
         //
@@ -21,7 +71,15 @@ namespace MvcApplication1.Controllers
 
         public ActionResult Details(int id)
         {
-            return View();
+            try
+            {
+                var c = catList.SingleOrDefault(m => m.Id == id);
+                 return View(c);
+            }
+            catch
+            {
+                return View("Error");
+            }
         }
 
         //
@@ -29,8 +87,8 @@ namespace MvcApplication1.Controllers
 
         public ActionResult Create()
         {
-            
-            return View("");
+            Cat c = new Cat();
+            return View("Create", c);
         }
 
         //
@@ -42,12 +100,12 @@ namespace MvcApplication1.Controllers
             try
             {
                 // TODO: Add insert logic here
-
-                return RedirectToAction("Index");
+                ModelState.AddModelError("Name", "kuku");
+                return View(cat);
             }
             catch
             {
-                return View();
+                return View("Error");
             }
         }
 
@@ -56,24 +114,40 @@ namespace MvcApplication1.Controllers
 
         public ActionResult Edit(int id)
         {
-            return View();
+            try
+            {
+                var c = catList.SingleOrDefault(m => m.Id == id);
+                return View(c);
+            }
+            catch
+            {
+                return View("Error");
+            }
         }
 
         //
         // POST: /Cat/Edit/5
 
         [HttpPost]
-        public ActionResult Edit(int id, FormCollection collection)
+        public ActionResult Edit(Cat cat)
         {
             try
             {
-                // TODO: Add update logic here
-
-                return RedirectToAction("Index");
+                if (TryValidateModel(cat))
+                {
+                    var source = catList.SingleOrDefault(c => c.Id == cat.Id);
+                    var position = catList.IndexOf(source);
+                    catList[position] = cat;
+                    return RedirectToAction("Index");
+                }
+                else
+                {
+                    return View(cat);
+                }
             }
             catch
             {
-                return View();
+                return View("Error");
             }
         }
 
@@ -82,19 +156,27 @@ namespace MvcApplication1.Controllers
 
         public ActionResult Delete(int id)
         {
-            return View();
+            try
+            {
+                var model = catList.SingleOrDefault(x => x.Id == id);
+                return View(model);
+            }
+            catch
+            {
+                return View("Error");
+            }
         }
 
         //
         // POST: /Cat/Delete/5
 
         [HttpPost]
-        public ActionResult Delete(int id, FormCollection collection)
+        public ActionResult Delete(Cat model)
         {
             try
             {
-                // TODO: Add delete logic here
-
+                var item = catList.SingleOrDefault(x => x.Id == model.Id);
+                catList.Remove(item);
                 return RedirectToAction("Index");
             }
             catch

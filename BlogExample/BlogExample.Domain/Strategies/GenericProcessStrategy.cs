@@ -157,13 +157,14 @@ namespace BlogExample.BL.Strategies
 
 
         #region IDisposable
-        public void Dispose()
+
+        protected virtual void Disposing()
         {
             if (!_disposed)
             {
                 Stop();
                 DataSourceProvider?.Dispose();
-                
+
                 PreProcessing = null;
                 PostProcessing = null;
                 LogicTaskContextFactory = null;
@@ -173,6 +174,11 @@ namespace BlogExample.BL.Strategies
                 GC.SuppressFinalize(this);
                 _disposed = true;
             }
+        }
+
+        public void Dispose()
+        {
+            Disposing();
         }
         ~GenericProcessStrategy()
         {

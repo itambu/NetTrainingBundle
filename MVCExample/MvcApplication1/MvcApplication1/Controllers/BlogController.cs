@@ -52,21 +52,27 @@ namespace MvcApplication1.Controllers
         [HttpPost]
         public ActionResult Edit(Blog model)
         {
+            ModelState.Clear();
             TryValidateModel(model);
             if (ModelState.IsValid)
             {
+                
                 var item = new DAL.BlogRepository()
                     .GetAll().Where(x => x.Id == model.Id).FirstOrDefault();
                 item.Description = model.Description;
                 item.PublishDate = model.PublishDate;
 
-                if (Request.IsAjaxRequest())
+                if (!Request.IsAjaxRequest())
                 {
-                    return View("Index");
+                    ModelState.AddModelError("Description", "Wrong");
+                    return View(model);
                 }
                 else
                 {
-                    return View("Index");
+                    ModelState.AddModelError("Description", "Wrong");
+                    ViewBag.Message = "Wrong";
+                    return View(model);
+
                 }
             }
             else

@@ -26,7 +26,7 @@ namespace BlogExample.BL.Custom
                                             _commandBuilder.GetParameters(entity)
                                         );
             Attach(entity);
-            Context.Entry(entity).Reload();
+            //Context.Entry(entity).Reload();
         }
     }
 }

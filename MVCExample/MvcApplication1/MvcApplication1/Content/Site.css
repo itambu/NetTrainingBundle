@@ -470,6 +470,16 @@ textarea {
         margin-right: 4px;
     }
 
+input[type="radio" i] {
+    background-color: initial;
+    cursor: default;
+    box-sizing: content-box;
+    margin: 3px 3px 3px 3px;
+    padding: initial;
+    border: initial;
+    width : 30px;
+}
+
 /* info and errors */
 .message-info {
     border: 1px solid;
@@ -513,6 +523,7 @@ input.input-validation-error {
 input[type="checkbox"].input-validation-error {
     border: 0 none;
 }
+
 
 .validation-summary-errors {
     color: #e80c4d;
@@ -586,6 +597,9 @@ tr.pager td {
     padding: 0 0.25em 0 0;
 }
 
+#filter-radio-button {
+    width: 30px;
+}
 
 /********************
 *   Mobile Styles   *
@@ -718,6 +732,9 @@ tr.pager td {
         width: 90%;
     }
 
+
+
+
     /* login page */
     #loginForm {
         border-right: none;
@@ -753,4 +770,6 @@ tr.pager td {
         footer p {
             margin: 0;
         }
+
+ 
 }

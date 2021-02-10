@@ -24,6 +24,7 @@ namespace BlogExample.ConsoleClient
             try
             {
                 handler.Start();
+                handler.Wait();
                 handler.Stop();
             }
             finally

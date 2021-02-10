@@ -42,6 +42,12 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="PagedList, Version=1.17.0.0, Culture=neutral, PublicKeyToken=abbb863e9397c5e1, processorArchitecture=MSIL">
+      <HintPath>..\packages\PagedList.1.17.0.0\lib\net40\PagedList.dll</HintPath>
+    </Reference>
+    <Reference Include="PagedList.Mvc, Version=4.5.0.0, Culture=neutral, PublicKeyToken=abbb863e9397c5e1, processorArchitecture=MSIL">
+      <HintPath>..\packages\PagedList.Mvc.4.5.0.0\lib\net40\PagedList.Mvc.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Data.Entity" />
@@ -181,6 +187,7 @@
     <Compile Include="App_Start\AuthConfig.cs" />
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />
+    <Compile Include="App_Start\ModelFilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\AccountController.cs" />
@@ -191,12 +198,21 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Infrastucture\StorageRouter.cs" />
     <Compile Include="Models\AccountModels.cs" />
     <Compile Include="Models\Blog.cs" />
     <Compile Include="Models\Cat.cs" />
+    <Compile Include="Models\Filters\CatFilter.cs" />
+    <Compile Include="Models\Filters\CatIndexViewModel.cs" />
+    <Compile Include="Models\Filters\ModelFilter.cs" />
+    <Compile Include="Models\Filters\ModelFilterFactory.cs" />
+    <Compile Include="Models\Filters\TextFieldCriteria.cs" />
+    <Compile Include="Models\Filters\TextFieldFilter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Content\custom-rbtn.css" />
+    <Content Include="Content\PagedList.css" />
     <Content Include="Content\themes\base\images\ui-bg_flat_0_aaaaaa_40x100.png" />
     <Content Include="Content\themes\base\images\ui-bg_flat_75_ffffff_40x100.png" />
     <Content Include="Content\themes\base\images\ui-bg_glass_55_fbf9ee_1x400.png" />
@@ -315,6 +331,12 @@
     <Content Include="Views\Blog\Edit.cshtml" />
     <Content Include="Views\Blog\BlogChart.cshtml" />
     <Content Include="Views\Cat.cshtml" />
+    <Content Include="Views\Cat\Create.cshtml" />
+    <Content Include="Views\Cat\Index.cshtml" />
+    <Content Include="Views\Cat\PartialViewCatList.cshtml" />
+    <Content Include="Views\Cat\Details.cshtml" />
+    <Content Include="Views\Cat\Edit.cshtml" />
+    <Content Include="Views\Cat\Delete.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
