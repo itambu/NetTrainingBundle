@@ -60,8 +60,11 @@
     }
 
     clear = function () {
-        $("form").find('#texbox').val('');
-        $("form").find('#checkbox').prop("checked", false);
+        document.getElementById('TopicSubstring').value = '';
+        document.getElementById('UserSubstring').value = '';
+        document.getElementById('From').value = '';
+        document.getElementById('To').value = '';
+        document.getElementById('checkbox').value = false;
         apply();
     }
 
