@@ -1,0 +1,73 @@
+﻿@model IEnumerable<BlogExample.MvcClient.Models.BlogHomeViewModel>
+
+@{
+    ViewBag.Title = "Home Page";
+}
+
+<div class="jumbotron">
+    <p class="lead">На нашем кладбище сбитых летчиков беспокойные мертвецы пишут лонгриды и нетолератно обсуждают вирусные темы.</p>
+<h1>Присоединяйся к нам!</h1>
+</div>
+
+
+<div class="table-responsive">
+    <table class="table">
+        <thead>
+            <tr><h3>10 Last Papers</h3></tr>
+            <tr>
+                <td>Topic</td>
+                <td>Author</td>
+                <td>Created at</td>
+                <td>Last commentator</td>
+            </tr>
+        </thead>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td class="btn-link">
+                    <span>
+                        @Html.ActionLink(item.Topic.Substring(0, Math.Min(item.Topic.Length, 30)), "Details", "Blog", new { id = item.Id, page = 1 }, null)
+                    </span>
+                </td>
+                <td>@item.Author.Nickname</td>
+                <td>@item.Created</td>
+                <td>
+                    @if (item.LastComment != null)
+                    {
+                        <span>@item.LastComment.Commenter.Nickname</span>
+                    }
+                </td>
+            </tr>
+        }
+    </table>
+</div>
+
+
+
+
+
+
+
+
+
+@*<div class="row">
+        <div class="col-md-4">
+            <h2>Getting started</h2>
+            <p>
+                ASP.NET MVC gives you a powerful, patterns-based way to build dynamic websites that
+                enables a clean separation of concerns and gives you full control over markup
+                for enjoyable, agile development.
+            </p>
+            <p><a class="btn btn-default" href="https://go.microsoft.com/fwlink/?LinkId=301865">Learn more &raquo;</a></p>
+        </div>
+        <div class="col-md-4">
+            <h2>Get more libraries</h2>
+            <p>NuGet is a free Visual Studio extension that makes it easy to add, remove, and update libraries and tools in Visual Studio projects.</p>
+            <p><a class="btn btn-default" href="https://go.microsoft.com/fwlink/?LinkId=301866">Learn more &raquo;</a></p>
+        </div>
+        <div class="col-md-4">
+            <h2>Web Hosting</h2>
+            <p>You can easily find a web hosting company that offers the right mix of features and price for your applications.</p>
+            <p><a class="btn btn-default" href="https://go.microsoft.com/fwlink/?LinkId=301867">Learn more &raquo;</a></p>
+        </div>
+    </div>*@

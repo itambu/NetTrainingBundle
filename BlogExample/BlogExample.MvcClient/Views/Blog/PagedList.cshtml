@@ -1,0 +1,24 @@
+﻿@model PagedList.IPagedList<BlogExample.MvcClient.Models.BlogSimpleViewModel>
+
+@using PagedList.Mvc; 
+
+@if (Model != null && Model.Count > 0)
+{
+    <div class="table-responsive">
+        <table class="table table-hover w-100 d-block d-md-table">
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td class="btn-link">@Html.ActionLink(item.Topic.Substring(0, Math.Min(item.Topic.Length, 30)), "Details", "Blog", new { id = item.Id, page = 1 }, null)</td>
+                    <td>@item.Author.Nickname</td>
+                    <td>@item.Created</td>
+                </tr>
+            }
+        </table>
+        @Html.PagedListPager(Model, x => Url.Action("Index", new { page = x }))
+    </div>
+}
+else
+{
+    <h5>No records</h5>
+}

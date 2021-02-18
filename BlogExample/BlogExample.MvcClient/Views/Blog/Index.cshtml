@@ -1,0 +1,99 @@
+﻿@model int
+
+@using PagedList.Mvc;
+
+<link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" />
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Read our blogs</h2>
+
+<div class="navbar">
+    <div class="navbar-collapse collapse">
+        <ul class="nav navbar-nav">
+            <li>@Html.ActionLink("New", "Create")</li>
+        </ul>
+    </div>
+</div>
+
+
+<div id="filtercontent" class="container">
+</div>
+
+<div id="pagedlist">
+</div>
+
+
+<script type="text/javascript">
+
+    successRequest = function (data, textStatus, XHR) {
+            jQuery("#filtercontent").html(data);
+            bindButtonListener();
+            pagedList();
+    }
+
+    failRequest = function () {
+        jQuery("#filtercontent").html().val("");
+    }
+
+    bindButtonListener = function()
+    {
+        jQuery("#applyblogfilter").click(apply);
+        jQuery("#clearblogfilter").click(clear);
+    }
+
+    pagedList = function () {
+        jQuery.ajax(
+            {
+                url: "@Url.Action("GetPagedItemView", "Blog")",
+                data: {page:@Model},
+                type: "GET",
+                success: function (data, textStatus, XHR) {
+                    jQuery("#pagedlist").html(data);
+                },
+                dataType: "html"
+            }
+        );
+    }
+
+    clear = function () {
+        $("form").find('#texbox').val('');
+        $("form").find('#checkbox').prop("checked", false);
+        apply();
+    }
+
+    apply = function () {
+        jQuery.ajax(
+            {
+                url: "@Url.Action("Apply","BlogFilter")",
+                data: $("form").serialize(),
+                type: "POST",
+                success: successRequest,
+                dataType: "html"
+            }
+        )
+            .fail(failRequest);
+    }
+
+    jQuery(document).ready(
+        function () {
+            jQuery.ajax(
+                {
+                    url: "@Url.Action("Index","BlogFilter")",
+                    type: "GET",
+                    success: successRequest,
+                    dataType: "html"
+                }
+            )
+                .fail(failRequest);
+            
+        }
+    );
+
+
+</script>
+
+

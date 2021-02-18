@@ -1,0 +1,73 @@
+﻿@model BlogExample.MvcClient.Models.BlogFilterViewModel
+
+<div class="container">
+    @using (Html.BeginForm("ApplyFilter", "Blog", FormMethod.Post))
+    {
+        @Html.AntiForgeryToken()
+        @Html.ValidationSummary(true)
+        <table class="table">
+            <tr>
+                <td>
+                    <div class="editor-label">
+                        @Html.LabelFor(model => model.TopicSubstring)
+                    </div>
+                    <div class="editor-field">
+                        @Html.EditorFor(model => model.TopicSubstring, new { id="textbox"})
+                        @Html.ValidationMessageFor(model => model.TopicSubstring)
+                    </div>
+                </td>
+                <td>
+                    <div class="editor-label">
+                        @Html.LabelFor(model => model.UserSubstring)
+                    </div>
+                    <div class="editor-field">
+                        @Html.EditorFor(model => model.UserSubstring, new { id = "textbox" })
+                        @Html.ValidationMessageFor(model => model.UserSubstring)
+                    </div>
+                </td>
+                <td>
+                    <div class="editor-label">
+                        @Html.LabelFor(model => model.From)
+                    </div>
+                    <div class="editor-field">
+                        @Html.EditorFor(model => model.From, new { @class = "date-picker", id = "textbox" })
+                        @Html.ValidationMessageFor(model => model.From)
+                    </div>
+                </td>
+                <td>
+                    <div class="editor-label">
+                        @Html.LabelFor(model => model.To)
+                    </div>
+                    <div class="editor-field">
+                        @Html.EditorFor(model => model.To, new { @class = "date-picker", id = "textbox" })
+                        @Html.ValidationMessageFor(model => model.To)
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div class="control-label">
+                        @Html.CheckBoxFor(model => model.OnlyMyBlog, new { id = "checkbox" })
+                        @Html.LabelFor(model => model.OnlyMyBlog)
+                    </div>
+                </td>
+                <td> </td>
+                <td> </td>
+                <td> </td>
+            </tr>
+            <tr>
+                <td>
+                    <input id="applyblogfilter" class="btn" value="Apply" type="button" />
+                    <input id="clearblogfilter" class="btn" value="Clear" type="button" />
+                </td>
+                <td>
+                    @Html.HiddenFor(m => m.AuthorizedUserId, new { id = "hidden" })
+                    @Html.ValidationMessageFor(model => model.AuthorizedUserId)
+                </td>
+            </tr>
+        </table>
+
+    }
+</div>
+
+

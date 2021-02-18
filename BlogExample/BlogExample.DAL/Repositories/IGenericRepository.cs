@@ -9,11 +9,11 @@ namespace BlogExample.DAL.Repositories
 {
     public interface IGenericRepository<TEntity> where TEntity: class
     {
-        IEnumerable<TEntity> Get(Expression<Func<TEntity, bool>> predicate = null);
+        IQueryable<TEntity> Get(Expression<Func<TEntity, bool>> predicate = null);
         void Add(TEntity entity);
         void Remove(TEntity entity);
         void Attach(TEntity entity);
         void Save();
-        TEntity SingleOrDefault(Expression<Func<TEntity, bool>> predicate);
+        TEntity SingleOrDefault(Expression<Func<TEntity, bool>> predicate = null);
     }
 }

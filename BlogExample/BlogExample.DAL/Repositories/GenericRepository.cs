@@ -29,12 +29,12 @@ namespace BlogExample.DAL.Repositories
             EntitySet.Attach(entity);
         }
 
-        public IEnumerable<TEntity> Get(Expression<Func<TEntity, bool>> predicate)
+        public IQueryable<TEntity> Get(Expression<Func<TEntity, bool>> predicate=null)
         {
-            return (predicate!=null)? EntitySet.Where(predicate).AsEnumerable() : EntitySet.AsEnumerable();
+            return (predicate != null) ? EntitySet.Where(predicate) : EntitySet;
         }
 
-        public TEntity SingleOrDefault(Expression<Func<TEntity, bool>> predicate)
+        public TEntity SingleOrDefault(Expression<Func<TEntity, bool>> predicate=null)
         {
             return EntitySet.Where(predicate).SingleOrDefault();
         }

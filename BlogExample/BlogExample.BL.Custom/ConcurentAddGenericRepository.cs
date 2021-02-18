@@ -21,7 +21,7 @@ namespace BlogExample.BL.Custom
 
         public new void Add(TEntity entity)
         {
-            Context.Database.ExecuteSqlCommand(
+            int p = Context.Database.ExecuteSqlCommand(
                                             _commandBuilder.CommandText,
                                             _commandBuilder.GetParameters(entity)
                                         );

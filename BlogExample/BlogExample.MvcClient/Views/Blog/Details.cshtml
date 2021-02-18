@@ -1,0 +1,63 @@
+﻿@model BlogExample.MvcClient.Models.BlogDetailViewModel
+@using BlogExample.MvcClient.Models;
+
+
+@using PagedList.Mvc
+
+@{
+    ViewBag.Title = "Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+@if (ViewBag.CanBeChanged)
+{
+<div class="btn">
+   @Html.ActionLink("Edit", "Edit", new {id = Model.Id})   
+</div>
+}
+
+<div>
+    <h5>@Html.DisplayFor(model => model.Created) @Html.DisplayFor(x => x.Author.Nickname)</h5>
+</div>
+
+
+<div>
+    <h3>@Html.DisplayFor(model => model.Topic)</h3>
+</div>
+
+
+<div>
+    @Html.DisplayFor(model => model.Text)
+</div>
+
+<hr />
+
+@if (Model.Comments != null && Model.Comments.Count > 0)
+{
+    <div>
+        <h4>Comments</h4>
+        <table class="table">
+            @foreach (var c in Model.Comments)
+            {
+                <tr>
+                    <td>
+                        @c.Commenter.Nickname
+                    </td>
+                    <td>
+                        @c.Text
+                    </td>
+                </tr>
+            }
+        </table>
+        @Html.PagedListPager(Model.Comments, page => Url.Action("Details", new { id = Model.Id, page = page }))
+    </div>
+
+    <hr />
+}
+
+@Html.Partial("~/Views/Comment/Create.cshtml", new AddCommentViewModel() { BlogId = Model.Id })
+
+<p>
+@Html.ActionLink("Back to List", "Index")
+</p>
