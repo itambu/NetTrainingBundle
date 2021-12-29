@@ -1,0 +1,70 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="Blogs.BL.ProcessManagers.BaseFileManager&lt;DTOEntity&gt;">
+    <Position X="7.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAEIAAAIIAAIAAAAIAAgAAAAAABAgAAAAAQAAAA=</HashCode>
+      <FileName>ProcessManagers\BaseFileManager.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="DataSourceHandlerBuilder" />
+      <Property Name="CancellationTokenSource" />
+      <Property Name="TaskScheduler" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="Blogs.BL.ProcessManagers.EventedFileManager&lt;DTOEntity&gt;">
+    <Position X="9.5" Y="4" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAACAAAAIAAAAAAAAAI=</HashCode>
+      <FileName>ProcessManagers\EventedFileManager.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Blogs.BL.ProcessManagers.FolderManager&lt;DTOEntity&gt;">
+    <Position X="5.25" Y="4" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAI=</HashCode>
+      <FileName>ProcessManagers\FolderManager.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Provider" />
+    </ShowAsAssociation>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Blogs.BL.DataSourceHandlers.DataSourceHandler&lt;DTOEntity&gt;" Collapsed="true">
+    <Position X="9.75" Y="2" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAACAAAgAAAAAAAAAAAAAAAAAAAAAgAAAAAAI=</HashCode>
+      <FileName>DataSourceHandlers\DataSourceHandler.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="System.Threading.CancellationTokenSource" Collapsed="true">
+    <Position X="4" Y="0.5" Width="1.5" />
+    <TypeIdentifier />
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="System.Threading.Tasks.TaskScheduler" Collapsed="true">
+    <Position X="4" Y="1.5" Width="1.5" />
+    <TypeIdentifier />
+  </Class>
+  <Interface Name="Blogs.BL.Abstractions.IFileProcessManager&lt;DTOEntity&gt;">
+    <Position X="2" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAEAAAAAAAAIAAAAIAAAAAAAAAAAAAAAAAAAAAI=</HashCode>
+      <FileName>Abstractions\IFileProcessManager.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Blogs.BL.Abstractions.IDataSourceHandleBuilder&lt;DTOEntity&gt;" Collapsed="true">
+    <Position X="9.75" Y="1" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Abstractions\Factories\IDataSourceHandleBuilder.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="System.Collections.Generic.IEnumerable&lt;T&gt;" Collapsed="true">
+    <Position X="3.25" Y="2.75" Width="1.5" />
+    <TypeIdentifier />
+  </Interface>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>
