@@ -27,13 +27,10 @@ namespace Blogs.BL.ProcessManagers
             DataSourceFactory = dataSourceFactory;
         }
 
-        public async virtual Task Run()
+        protected override void RunUnsafe()
         {
-            await Task.Factory.StartNew(() =>
-            {
-                Watcher.Created += Watcher_Created;
-                Watcher.EnableRaisingEvents = true;
-            });
+            Watcher.Created += Watcher_Created;
+            Watcher.EnableRaisingEvents = true;
         }
 
         private void Watcher_Created(object sender, FileSystemEventArgs e)

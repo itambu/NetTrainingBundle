@@ -73,9 +73,9 @@ namespace Blogs.BL.ProcessManagers
         }
         protected Task CreateTask(IBlogDataSource<DTOEntity> source)
         {
-            Task<TaskCompletionStatus> temp = Task.Factory.StartNew<TaskCompletionStatus>(() =>
-                MainAction(source),
-                ParallelismHandler.CancelTokenSource.Token,
+            Task<TaskCompletionStatus> temp = Task.Factory.StartNew<TaskCompletionStatus>(
+                () => MainAction(source),
+                ParallelismHandler.StopTokenSource.Token,
                 TaskCreationOptions.None,
                 ParallelismHandler.TaskScheduler);
                 ParallelismHandler.Add(temp);
@@ -99,6 +99,32 @@ namespace Blogs.BL.ProcessManagers
                 }
             });
             return temp;
+        }
+
+        protected abstract void RunUnsafe();
+
+        public Task Run()
+        {
+            try
+            {
+                var syncResult = ParallelismHandler.TryLockForStart();
+                if (!syncResult) return null;
+
+                Task temp = Task.Factory.StartNew(() => 
+                {
+                    RunUnsafe();
+                });
+
+                return temp;
+            }
+            catch (Exception e)
+            {
+                throw new HandlerException(e);
+            }
+            finally
+            {
+                ParallelismHandler.ReleaseLockForStart();
+            }
         }
     }
 }

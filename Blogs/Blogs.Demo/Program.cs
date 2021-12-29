@@ -40,6 +40,7 @@ namespace Blogs.Demo
         {
             App app = new App();
             app.Start().Wait();
+
             Console.WriteLine("Started and Listening");
             Console.ReadKey();
             app.Stop().Wait();

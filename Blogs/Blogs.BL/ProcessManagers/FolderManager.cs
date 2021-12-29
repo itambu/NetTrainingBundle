@@ -28,21 +28,16 @@ namespace Blogs.BL.ProcessManagers
             Provider = provider;
         }
 
-        public virtual Task Run()
+        protected override void RunUnsafe()
         {
-            Task temp = Task.Factory.StartNew(() =>
+            foreach (var c in Provider)
             {
-                foreach (var c in Provider)
+                if (ParallelismHandler.StopTokenSource.IsCancellationRequested)
                 {
-                    if (ParallelismHandler.StopTokenSource.IsCancellationRequested)
-                    {
-                        break;
-                    }
-                    ParallelismHandler.Add(CreateTask(c));
+                    break;
                 }
-            });
-            //ParallelismHandler.Add(temp);
-            return temp;
+                ParallelismHandler.Add(CreateTask(c));
+            }
         }
     }
 }

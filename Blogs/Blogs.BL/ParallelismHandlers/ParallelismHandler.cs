@@ -16,6 +16,8 @@ namespace Blogs.BL.ParallelismHandlers
         public TaskScheduler TaskScheduler { get; protected set; }
         protected IProducerConsumerCollection<Task> TaskCollection { get; set; }
 
+        protected object _syncObj = new object();
+
         public ParallelismHandler(
             CancellationTokenSource cancelTokenSource,
             CancellationTokenSource stopTokenSource,
@@ -62,6 +64,16 @@ namespace Blogs.BL.ParallelismHandlers
         public async Task WaitForCompletion()
         {
             await Task.WhenAll(TaskCollection);
+        }
+
+        public bool TryLockForStart()
+        {
+            return Monitor.TryEnter(_syncObj, 0);
+        }
+
+        public void ReleaseLockForStart()
+        {
+            Monitor.Exit(_syncObj);
         }
     }
 }
