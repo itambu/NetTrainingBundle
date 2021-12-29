@@ -1,0 +1,37 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="Blogs.BL.DataSourceHandlers.DataSourceHandler&lt;DTOEntity&gt;">
+    <Position X="0.5" Y="1.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAACAAAgAAEAAAAAAAAAAAAAAAAAAgAAAAAAI=</HashCode>
+      <FileName>DataSourceHandlers\DataSourceHandler.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="ItemHandler" />
+      <Property Name="DataSource" />
+    </ShowAsAssociation>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Interface Name="Blogs.BL.Abstractions.IDataSourceHandler" Collapsed="true">
+    <Position X="0.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAI=</HashCode>
+      <FileName>Abstractions\IDataSourceHandler.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Blogs.BL.Abstractions.IDataItemHandler&lt;DTOEntity&gt;" Collapsed="true">
+    <Position X="4.75" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Abstractions\IDataItemHandler.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Blogs.BL.Abstractions.IBlogDataSource&lt;DTOEntity&gt;" Collapsed="true">
+    <Position X="4.75" Y="3" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Abstractions\IBlogDataSource.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

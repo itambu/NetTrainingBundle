@@ -1,0 +1,96 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="Blogs.BL.DataSourceHandlers.BlogDataSourceHandlerBuilder">
+    <Position X="3" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAgAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>DataSourceHandlers\BlogDataSourceHandlerBuilder.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Blogs.BL.DataSourceHandlers.DataSourceHandleBuilder&lt;DTOEntity&gt;">
+    <Position X="2.25" Y="1" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAgAAAAAAAAACACAAAAAAAAAAABgAAAAAAAEAAAAAA=</HashCode>
+      <FileName>DataSourceHandlers\DataSourceHandleBuilder.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="ConnectionFactory" />
+      <Property Name="ContextFactory" />
+      <Property Name="HandlerFactory" />
+      <Property Name="ReposFactory" />
+      <Property Name="Parser" />
+    </ShowAsAssociation>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Blogs.BL.ConnectionFactories.SqlConnectionFactory" Collapsed="true">
+    <Position X="8.75" Y="0.5" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAIBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>ConnectionFactories\SqlConnectionFactory.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Blogs.DAL.BlogContextFactories.BlogContextFactory" Collapsed="true">
+    <Position X="8.75" Y="1.5" Width="2" />
+    <TypeIdentifier />
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Blogs.DAL.RepositotyFactories.RepositoryFactory" Collapsed="true">
+    <Position X="8.75" Y="3.5" Width="2" />
+    <TypeIdentifier />
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Blogs.BL.DataSourceHandlers.BlogDataSourceHandlerFactory" Collapsed="true">
+    <Position X="8.75" Y="2.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>DataSourceHandlers\BlogDataSourceHandlerFactory.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Blogs.BL.DTOEntityParsers.DTOParser" Collapsed="true">
+    <Position X="8.75" Y="4.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAApAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>DTOEntityParsers\DTOParser.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Interface Name="Blogs.BL.Abstractions.IDataSourceHandleBuilder&lt;DTOEntity&gt;">
+    <Position X="0.5" Y="1" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Abstractions\Factories\IDataSourceHandleBuilder.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Blogs.BL.Abstractions.IConnectionFactory" Collapsed="true">
+    <Position X="6.5" Y="0.5" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Abstractions\Factories\IConnectionFactory.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Blogs.DAL.Abstractions.IBlogContextFactory" Collapsed="true">
+    <Position X="6.5" Y="1.5" Width="1.75" />
+    <TypeIdentifier />
+  </Interface>
+  <Interface Name="Blogs.BL.Abstractions.IDataSourceHandlerFactory&lt;DTOEntity&gt;" Collapsed="true">
+    <Position X="5.5" Y="2.5" Width="3" />
+    <TypeIdentifier>
+      <HashCode>AAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Abstractions\Factories\IDataSourceHandlerFactory.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Blogs.DAL.Abstractions.IRepositoryFactory" Collapsed="true">
+    <Position X="6.75" Y="3.5" Width="1.75" />
+    <TypeIdentifier />
+  </Interface>
+  <Interface Name="Blogs.BL.Abstractions.IDTOEntityParser&lt;DTOEntity&gt;" Collapsed="true">
+    <Position X="6.75" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAApAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Abstractions\IDTOEntityParser.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>
