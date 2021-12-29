@@ -1,4 +1,5 @@
-﻿using AutoMapper.QueryableExtensions;
+﻿using AutoMapper;
+using AutoMapper.QueryableExtensions;
 using BlogExample.DAL.Repositories;
 using BlogExample.MvcClient.Models;
 using BlogExample.WebClientBL.Contexts;
@@ -13,18 +14,18 @@ using System.Web.Mvc;
 
 namespace BlogExample.MvcClient.Controllers
 {
-    public class HomeController : Controller
+    public class HomeController : ServiceLocatorController
     {
         public async Task<ActionResult> Index()
         {
             IEnumerable<BlogHomeViewModel> blogs;
-            using(var context = new BlogContext())
+            using(var context = ContextFactory.CreateInstance())
             {
                 blogs = await new GenericRepository<Blog>(context)
                     .Get()
                     .OrderByDescending(x => x.Created)
                     .Take(10)
-                    .ProjectTo<BlogHomeViewModel>(MapperHelper.Config)
+                    .ProjectTo<BlogHomeViewModel>(Locator.Get<IMapper>().ConfigurationProvider)
                     .ToListAsync();
             }
             return View(blogs);

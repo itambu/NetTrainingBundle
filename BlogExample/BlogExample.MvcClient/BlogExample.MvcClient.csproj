@@ -178,6 +178,33 @@
     <Compile Include="App_Start\IdentityConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
+    <Compile Include="Controllers\ServiceLocatorController.cs" />
+    <Compile Include="Integration\SessionPersistance\Avatar\AvatarEqualityComparer.cs" />
+    <Compile Include="Integration\SessionPersistance\Avatar\Factories\AvatarPersistanceManagerFactory.cs" />
+    <Compile Include="Integration\SessionPersistance\Avatar\Factories\AvatarPersistanceProviderFactory.cs" />
+    <Compile Include="Integration\SessionPersistance\BlogFilter\BlogPersistanceManager.cs" />
+    <Compile Include="Integration\SessionPersistance\BlogFilter\Factories\BlogPersistanceManagerFactory.cs" />
+    <Compile Include="Integration\SessionPersistance\PersistanceManager.cs" />
+    <Compile Include="Integration\SessionPersistance\BlogFilter\BlogFilterHandler.cs" />
+    <Compile Include="Integration\SessionPersistance\BlogFilter\Factories\BlogFilterHandlerFactory.cs" />
+    <Compile Include="Integration\SessionPersistance\BlogFilter\BlogFilterVerifyer.cs" />
+    <Compile Include="Integration\SessionPersistance\SessionSupport.cs" />
+    <Compile Include="Authorization\IAuthorizedUser.cs" />
+    <Compile Include="Integration\DbContextFactory\DbContextFactory.cs" />
+    <Compile Include="Integration\SessionPersistance\Avatar\AvatarPersistanceProvider.cs" />
+    <Compile Include="Integration\SessionPersistance\Avatar\AvatarPrincipalVerifyer.cs" />
+    <Compile Include="Integration\SessionPersistance\Avatar\Factories\AvatarViewModelHandlerFactory.cs" />
+    <Compile Include="Integration\SessionPersistance\Avatar\PrincipalToUserTransformation.cs" />
+    <Compile Include="Integration\SessionPersistance\KeyPersistanceHandler.cs" />
+    <Compile Include="Integration\SessionPersistance\SessionPersistanceHandler.cs" />
+    <Compile Include="Integration\SessionPersistance\Avatar\AvatarPersistanceHandler.cs" />
+    <Compile Include="PermissionProvider\IPermissionProvider.cs" />
+    <Compile Include="PermissionProvider\OperationPermission.cs" />
+    <Compile Include="PermissionProvider\PermissionRule.cs" />
+    <Compile Include="PermissionProvider\PermissionConfiguration.cs" />
+    <Compile Include="PermissionProvider\PermissionHelper.cs" />
+    <Compile Include="PermissionProvider\PermissionOperationException.cs" />
+    <Compile Include="PermissionProvider\PermissionProvider.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\AnalyzeController.cs" />
     <Compile Include="Controllers\BlogController.cs" />
@@ -207,7 +234,9 @@
     <Compile Include="Models\ManageViewModels.cs" />
     <Compile Include="Models\User\UserStatus.cs" />
     <Compile Include="Models\User\UserViewModel.cs" />
+    <Compile Include="Models\User\AvatarViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Integration\ServiceLocator\ServiceLocatorHelper.cs" />
     <Compile Include="Startup.cs" />
     <Compile Include="FilterModels\BaseFilterExpression.cs" />
     <Compile Include="FilterModels\BlogFilter.cs" />
@@ -331,6 +360,9 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="ServiceLocatorHelper\" />
+    <Folder Include="Views\Shared\DisplayTemplates\" />
+    <Folder Include="Views\Shared\EditorTemplates\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff2" />
@@ -357,6 +389,14 @@
     <ProjectReference Include="..\BlogExample.WebClientBL\BlogExample.WebClientBL.csproj">
       <Project>{3134e077-98aa-4343-ab6d-82a66f14e4dd}</Project>
       <Name>BlogExample.WebClientBL</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\PermissionService\PersistanceService.csproj">
+      <Project>{4ef2ab73-0a35-41fa-9f99-042ee463c0e0}</Project>
+      <Name>PersistanceService</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ServiceLocator\ServiceLocator.csproj">
+      <Project>{c33a9e04-78e5-4616-a1d0-37741a4ebc7f}</Project>
+      <Name>ServiceLocator</Name>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup>

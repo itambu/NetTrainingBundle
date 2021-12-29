@@ -11,12 +11,15 @@ using Microsoft.Owin.Security;
 using BlogExample.MvcClient.Models;
 using BlogExample.BL.Custom.Factories;
 using BlogExample.DAL.Repositories;
-using BlogExample;
+using BlogExample.MvcClient.Authorization;
+using BlogExample.MvcClient.Integration;
+using PersistanceService;
+using BlogExample.WebClientBL.Models;
 
 namespace BlogExample.MvcClient.Controllers
 {
     [Authorize]
-    public class AccountController : Controller
+    public class AccountController : ServiceLocatorController
     {
         private ApplicationSignInManager _signInManager;
         private ApplicationUserManager _userManager;
@@ -210,9 +213,9 @@ namespace BlogExample.MvcClient.Controllers
         {
             if (result.Succeeded)
             {
-                using (var context = new WebClientBL.Contexts.BlogContext())
+                using (var context = ContextFactory.CreateInstance())
                 {
-                    IGenericRepository<WebClientBL.Models.User> users = new GenericRepository<WebClientBL.Models.User>(context);
+                    IGenericRepository<User> users = new GenericRepository<User>(context);
                     users.Add(user);
                     users.Save();
                 }
@@ -422,7 +425,7 @@ namespace BlogExample.MvcClient.Controllers
                     {
                         result = CreateExternalUser(info);
                         CreateJournalUser(
-                            new WebClientBL.Models.User()
+                            new User()
                             {
                                 EMail = info.Email,
                                 Nickname = info.DefaultUserName,
@@ -465,7 +468,7 @@ namespace BlogExample.MvcClient.Controllers
         public ActionResult LogOff()
         {
             AuthenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie);
-            this.ResetUserName();
+            ServiceLocatorHelper.Locator.Get<IPersistanceHandler<AvatarViewModel>>().Clear();
             Session.Abandon();
             return RedirectToAction("Index", "Home");
         }

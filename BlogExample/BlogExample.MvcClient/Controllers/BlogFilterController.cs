@@ -1,5 +1,7 @@
-﻿using BlogExample.MvcClient.FilterModels;
+﻿using AutoMapper;
+using BlogExample.MvcClient.FilterModels;
 using BlogExample.MvcClient.Models;
+using PersistanceService;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,13 +10,14 @@ using System.Web.Mvc;
 
 namespace BlogExample.MvcClient.Controllers
 {
-    public class BlogFilterController : Controller
+    public class BlogFilterController : ServiceLocatorController
     {
 
         public ActionResult Index()
         {
-            BlogFilterViewModel model = MapperHelper.Mapper
-                .Map<BlogFilter, BlogFilterViewModel>(this.LoadBlogFilterFromSessionOrDefault());
+            BlogFilterViewModel model = Locator.Get<IMapper>()
+                .Map<BlogFilter, BlogFilterViewModel>(
+                Locator.Get<IParametrizedFactory<IPersistanceManager<BlogFilter>, HttpContextBase>>().CreateInstance(HttpContext).Get());
             return PartialView("Index", model);
         }
 
@@ -38,7 +41,9 @@ namespace BlogExample.MvcClient.Controllers
                 {
                     ModelState.AddModelError("Filter", "Corrupted filter");
                 }
-                this.SaveBlogFilterInSession(MapperHelper.Mapper.Map<BlogFilter>(model));
+                Locator.Get<IParametrizedFactory<IPersistanceManager<BlogFilter>, HttpContextBase>>()
+                    .CreateInstance(HttpContext)
+                    .Save(Locator.Get<IMapper>().Map<BlogFilter>(model));
             }
             return PartialView("Index", model);
         }

@@ -1,19 +1,7 @@
-﻿@using Microsoft.AspNet.Identity
-@using BlogExample.WebClientBL.Contexts;
-@using BlogExample.WebClientBL.Models;
-@using BlogExample.DAL.Repositories;
+﻿@using BlogExample.MvcClient.Integration.SessionPersistance;
+@using BlogExample.MvcClient.Models;
+@using BlogExample.MvcClient.Integration;
 
-
-@{
-    if (Session["UserName"] == null && User.Identity.IsAuthenticated)
-    {
-        using (var context = new BlogContext())
-        {
-            Session["UserName"] = (new GenericRepository<User>(context))
-                .SingleOrDefault(x => x.EMail == User.Identity.Name).Nickname;
-        }
-    }
-}
 
 @if (Request.IsAuthenticated)
 {
@@ -23,7 +11,7 @@
 
         <ul class="nav navbar-nav navbar-right">
             <li>
-                @Html.ActionLink("Hello " + (string)Session["UserName"] + "!", "Index", "Manage", routeValues: null, htmlAttributes: new { title = "Manage" })
+                @Html.ActionLink(Context.GetViewModel<AvatarViewModel>().Nickname, "Index", "Manage", routeValues: null, htmlAttributes: new { title = "Manage" })
             </li>
             <li><a href="javascript:document.getElementById('logoutForm').submit()">Log off</a></li>
         </ul>

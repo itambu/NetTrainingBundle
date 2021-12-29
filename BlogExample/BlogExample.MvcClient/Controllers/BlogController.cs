@@ -11,10 +11,16 @@ using System.Data.Entity;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using BlogExample.MvcClient.Authorization;
+using BlogExample.MvcClient.PermissionService;
+using BlogExample.MvcClient.Integration.SessionPersistance;
+using BlogExample.MvcClient.Integration;
+using PersistanceService;
+using AutoMapper;
 
 namespace BlogExample.MvcClient.Controllers
 {
-    public class BlogController : Controller
+    public class BlogController : ServiceLocatorController
     {
         // GET: Blog
         [HttpGet]
@@ -31,12 +37,16 @@ namespace BlogExample.MvcClient.Controllers
             try 
             {
                 IPagedList<BlogSimpleViewModel> model;
-                using (var context = new WebClientBL.Contexts.BlogContext())
+                using (var context = ContextFactory.CreateInstance())
                 {
-                    BlogFilter filter = this.LoadBlogFilterFromSessionOrDefault();
+                    //var user = HttpContext.GetViewModel<AvatarViewModel>();
+                    //var currentUser = new GenericRepository<User>(context).SingleOrDefault(x => x.EMail == User.Identity.Name);
+
+                    var filter = Locator.Get<IParametrizedFactory<IPersistanceManager<BlogFilter>, HttpContextBase>>()
+                        .CreateInstance(HttpContext).Get();
                     IGenericRepository<Blog> blogs = new GenericRepository<Blog>(context);
-                    model = blogs.Get((new BlogFilterExpression(filter)).Query)
-                            .ProjectTo<BlogSimpleViewModel>(MapperHelper.Config)
+                    model = blogs.Get(new BlogFilterExpression(filter).Query)
+                            .ProjectTo<BlogSimpleViewModel>(Locator.Get<IMapper>().ConfigurationProvider)
                             .OrderByDescending(x => x.Created)
                             .ToPagedList(page ?? 1, 5);
                 }
@@ -55,26 +65,31 @@ namespace BlogExample.MvcClient.Controllers
             try
             {
                 BlogDetailViewModel model;
-                using (var context = new BlogContext())
+                using (var context = ContextFactory.CreateInstance())
                 {
                     // check the exactly one blog entity exists
                     var blog = (new GenericRepository<Blog>(context)).Get().Single(x => x.Id == id);
 
+                    ValidateEntityPermission(context, blog);
+
                     var comments = (new GenericRepository<Comment>(context))
                        .Get(x => x.Blog.Id == id)
                        .OrderBy(x => x.Created)
-                       .ProjectTo<CommentViewModel>(MapperHelper.Config)
+                       .ProjectTo<CommentViewModel>(Locator.Get<IMapper>().ConfigurationProvider)
                        .ToPagedList(page, 10);
 
-                    model = MapperHelper.Mapper.Map<Blog, BlogDetailViewModel>(
+                    model = Locator.Get<IMapper>().Map<Blog, BlogDetailViewModel>(
                         blog,
                         opt =>
                         {
                             opt.AfterMap((s, d) => d.Comments = comments);
                         });
-                    ViewBag.CanBeChanged = VerifyPermittionForChangeOperation(context, blog.User);
                 }
                 return View(model);
+            }
+            catch(PermissionOperationException)
+            {
+                return View("Forbidden");
             }
             catch (InvalidOperationException)
             {
@@ -106,17 +121,19 @@ namespace BlogExample.MvcClient.Controllers
 
             try
             {
-                using (var context = new BlogContext())
+                using (var context = ContextFactory.CreateInstance())
                 {
                     var blogs = new GenericRepository<Blog>(context);
+                    var users = new GenericRepository<User>(context);
+                    var userId = HttpContext.GetViewModel<AvatarViewModel>().Id;
                     blogs.Add(
                         new Blog()
                         {
                             Topic = model.Topic,
                             Text = model.Text,
                             Created = DateTime.Now,
-                            User = this.GetAuthorizedUser(context)
-                        }); ;
+                            User = users.Get().Single(x => x.Id == userId)
+                        });
                     blogs.Save();
                 }
             }
@@ -127,33 +144,43 @@ namespace BlogExample.MvcClient.Controllers
             return RedirectToAction("Index");
         }
 
-        protected bool VerifyPermittionForChangeOperation(DbContext context, User owner)
-        {
-            var currentUser = this.GetAuthorizedUser(context);
-            return (owner.Id == currentUser.Id || User.IsInRole("admin"));
-        }
-
-        // GET: Blog/Edit/5
         [Authorize]
         public ActionResult Edit(int id)
         {
             try
             {
                 EditBlogViewModel model;
-                using (var context = new BlogContext())
+                using (var context = ContextFactory.CreateInstance())
                 {
                     var blog = new GenericRepository<Blog>(context).Get().Single(x => x.Id == id);
-                    if (!VerifyPermittionForChangeOperation(context, blog.User))
-                    {
-                        throw new InvalidOperationException("You can edit only your blog");
-                    }
-                    model = MapperHelper.Mapper.Map<EditBlogViewModel>(blog);
+                    ValidateEntityPermission(context, blog);
+                    model = Locator.Get<IMapper>().Map<EditBlogViewModel>(blog);
                 }
                 return View(model);
+            }
+            catch(PermissionOperationException e)
+            {
+                return View("Forbidden", e.Message);
             }
             catch
             {
                 return View("Error");
+            }
+        }
+
+        protected void ValidateEntityPermission(DbContext context, Blog blog)
+        {
+            var userId = HttpContext.GetViewModel<AvatarViewModel>().Id;
+            var user = new GenericRepository<User>(context).Get().Single(x => x.Id == userId);
+            if (!Locator.Get<IPermissionProvider>().HasPermission<Blog, User>(blog,
+                user, this.User, OperationPermission.Update))
+            {
+                ViewBag.HasUpdatePermission = false;
+                throw new PermissionOperationException(user.Nickname);
+            }
+            else
+            {
+                ViewBag.HasUpdatePermission = true;
             }
         }
 
@@ -169,15 +196,22 @@ namespace BlogExample.MvcClient.Controllers
 
             try
             {
-                using (var context = new BlogContext())
+                using (var context = ContextFactory.CreateInstance())
                 {
                     var blogs = new GenericRepository<Blog>(context);
                     var blog = blogs.Get().Single(x => x.Id == model.Id);
+
+                    ValidateEntityPermission(context, blog);
+
                     blog.Topic = model.Topic;
                     blog.Text = model.Text;
                     blogs.Save();
                 }
                 return RedirectToAction("Index");
+            }
+            catch(PermissionOperationException e)
+            {
+                return View("Forbidden");
             }
             catch
             {

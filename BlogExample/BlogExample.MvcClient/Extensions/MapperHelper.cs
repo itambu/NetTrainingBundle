@@ -12,17 +12,9 @@ namespace BlogExample.MvcClient
 {
     public static class MapperHelper
     {
-        private static MapperConfiguration _config;
-        private static Mapper _mapper;
-
-        public static Mapper Mapper =>_mapper;
-
-        public static MapperConfiguration Config => _config;
-
-
-        public static void MapperConfig()
+        public static MapperConfiguration MapperConfig()
         {
-            _config = new MapperConfiguration(cfg => 
+            return new MapperConfiguration(cfg => 
             {
                 cfg.CreateMap<User, UserViewModel>()
                     .ForMember(s => s.Id, x => x.MapFrom(s => s.Id))
@@ -45,6 +37,7 @@ namespace BlogExample.MvcClient
                     .ForMember(s => s.BlogId, x => x.MapFrom(s => s.Blog.Id));
 
                 cfg.CreateMap<Blog, BlogDetailViewModel>()
+                    .ForMember(s => s.Author, x => x.MapFrom(s => s.User))
                     .ForMember(s => s.Comments, x => x.Ignore());
 
                 cfg.CreateMap<Blog, BlogHomeViewModel>()
@@ -53,7 +46,6 @@ namespace BlogExample.MvcClient
                             s.Comments.OrderByDescending(z => z.Created).FirstOrDefault()
                         ));
             });
-            _mapper = new Mapper(_config);
         }
     }
 }

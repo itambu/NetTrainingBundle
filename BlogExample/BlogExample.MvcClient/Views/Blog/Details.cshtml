@@ -1,6 +1,9 @@
 ﻿@model BlogExample.MvcClient.Models.BlogDetailViewModel
 @using BlogExample.MvcClient.Models;
-
+@using BlogExample.MvcClient.PermissionService;
+@using BlogExample.WebClientBL.Models;
+@using BlogExample.MvcClient.Integration.SessionPersistance;
+@using BlogExample.MvcClient.Integration;
 
 @using PagedList.Mvc
 
@@ -9,13 +12,13 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-
-@if (ViewBag.CanBeChanged)
+@if (ViewBag.HasUpdatePermission)
 {
-<div class="btn">
-   @Html.ActionLink("Edit", "Edit", new {id = Model.Id})   
-</div>
+    <div class="btn">
+        @Html.ActionLink("Edit", "Edit", new { id = Model.Id })
+    </div>
 }
+
 
 <div>
     <h5>@Html.DisplayFor(model => model.Created) @Html.DisplayFor(x => x.Author.Nickname)</h5>
@@ -59,5 +62,5 @@
 @Html.Partial("~/Views/Comment/Create.cshtml", new AddCommentViewModel() { BlogId = Model.Id })
 
 <p>
-@Html.ActionLink("Back to List", "Index")
+    @Html.ActionLink("Back to List", "Index")
 </p>

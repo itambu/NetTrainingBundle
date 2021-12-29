@@ -1,4 +1,5 @@
 ﻿using BlogExample.DAL.Repositories;
+using BlogExample.MvcClient.Integration.SessionPersistance;
 using BlogExample.MvcClient.Models;
 using BlogExample.WebClientBL.Contexts;
 using BlogExample.WebClientBL.Models;
@@ -22,11 +23,13 @@ namespace BlogExample.MvcClient.Controllers
                 {
                     using (var context = new BlogContext())
                     {
+                        var users = new GenericRepository<User>(context);
+                        var userId = HttpContext.GetViewModel<AvatarViewModel>().Id;
                         var comment = new Comment()
                         {
                             Text = model.Text,
-                            User = this.GetAuthorizedUser(context),
-                            Blog = (new GenericRepository<Blog>(context)).SingleOrDefault(x => x.Id == model.BlogId),
+                            User = users.Get().Single(x=>x.Id == userId),
+                            Blog = (new GenericRepository<Blog>(context)).Get().Single(x => x.Id == model.BlogId),
                             Created = DateTime.Now,
                         };
                         var comments = new GenericRepository<Comment>(context);
