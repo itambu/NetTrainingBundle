@@ -181,16 +181,16 @@ namespace Blogs.BL.StartApp
             OnStop?.Invoke(this, args);
         }
 
-        public async Task Start()
+        public Task Start()
         {
-            await Task.WhenAll(_eventedManager.Run(), _folderManager.Run());
+            return Task.WhenAll(_eventedManager.Run(), _folderManager.Run());
         }
 
-        public async Task Stop()
+        public Task Stop()
         {
             OnStopEvent(this, null);
             Task.WhenAll(ParallelismHandlers.Values.Select(x => x.RequestStop())).Wait();
-            await Task.WhenAll(ParallelismHandlers.Values.Select(x => x.WaitForCompletion()));
+            return Task.WhenAll(ParallelismHandlers.Values.Select(x => x.WaitForCompletion()));
         }
 
         public void Dispose()

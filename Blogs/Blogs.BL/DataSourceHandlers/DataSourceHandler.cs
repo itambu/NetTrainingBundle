@@ -61,7 +61,7 @@ namespace Blogs.BL.DataSourceHandlers
                         DataSource.Backup();
                         scope.Complete();
                     }
-                    catch(Exception e)
+                    catch (Exception e)
                     {
                         ConsistancyHandler.Rollback(DataSource.Id);
                         throw new HandlerException(e);

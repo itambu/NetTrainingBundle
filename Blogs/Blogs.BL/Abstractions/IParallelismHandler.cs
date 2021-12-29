@@ -17,5 +17,10 @@ namespace Blogs.BL.Abstractions
         CancellationTokenSource StopTokenSource { get; }
         TaskScheduler TaskScheduler { get; }
         Task WaitForCompletion();
+
+        //object SyncObj { get; }
+
+        bool TryLockForStart();
+        void ReleaseLockForStart();
     }
 }
