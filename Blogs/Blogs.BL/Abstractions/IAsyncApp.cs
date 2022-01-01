@@ -6,14 +6,11 @@ using System.Threading.Tasks;
 
 namespace Blogs.BL.Abstractions
 {
-    public interface IControlable
+    public interface IAsyncApp : IDisposable
     {
-        Task Start();
-        Task Stop();
-        Task Pause();
-        Task Resume();
-        Task Cancel();
-
+        Task CancelAsync();
+        Task StopAsync();
+        Task StartAsync();
         event EventHandler OnStop;
         event EventHandler OnCancel;
     }

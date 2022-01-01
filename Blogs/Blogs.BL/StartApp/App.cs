@@ -1,11 +1,12 @@
 ﻿using Blogs.BL.Abstractions;
+using Blogs.BL.AsyncHandlers;
 using Blogs.BL.ConnectionFactories;
 using Blogs.BL.ConsistancyHandlers;
 using Blogs.BL.DataSourceFactories;
 using Blogs.BL.DataSourceHandlers;
 using Blogs.BL.DTOEntityParsers;
 using Blogs.BL.FolderDataSourceProviders;
-using Blogs.BL.ParallelismHandlers;
+using Blogs.BL.Infrastructure;
 using Blogs.BL.ProcessManagers;
 using Blogs.DAL.Abstractions;
 using Blogs.DAL.BlogContextFactories;
@@ -23,23 +24,25 @@ using System.Threading.Tasks;
 
 namespace Blogs.BL.StartApp
 {
-    public class App : IControlable, IDisposable
+    public class App : IAsyncApp, IDisposable
     {
-        protected IFileProcessManager<BlogDataSourceDTO> _folderManager;
-        protected IFileProcessManager<BlogDataSourceDTO> _eventedManager;
+        private bool isDisposed = false;
+
+        protected IProcessHandler<BlogDataSourceDTO> _folderManager;
+        protected IProcessHandler<BlogDataSourceDTO> _eventedManager;
 
         IConfigurationRoot _config;
-        CancellationTokenSource cancelTokenSource = new CancellationTokenSource();
-        CancellationTokenSource stopTokenSource = new CancellationTokenSource();
+        TokenSourceSet TokenSources = new TokenSourceSet(stop: new CancellationTokenSource(), cancel: new CancellationTokenSource());
+        EntityConcurrencyHandler _entityConcurrencyHandler = new EntityConcurrencyHandler();
+
+
         FileSystemWatcher Watcher;
-        IDictionary<Type, IParallelismHandler> ParallelismHandlers = new Dictionary<Type, IParallelismHandler>();
+        IDictionary<Type, IAsyncHandler<BlogDataSourceDTO>> AsyncHandlers = new Dictionary<Type, IAsyncHandler<BlogDataSourceDTO>>();
         IConnectionFactory connectionFactory;
         IDataSourceFactory<BlogDataSourceDTO> dataSourceFactory;
         IBlogContextFactory contextFactory;
         IRepositoryFactory repoFactory;
         IDataSourceHandleBuilder<BlogDataSourceDTO> dataSourceHandlerBuilder;
-
-        private bool isDisposed = false;
 
         public event EventHandler OnStop;
         public event EventHandler OnCancel;
@@ -53,9 +56,10 @@ namespace Blogs.BL.StartApp
             InitDbContextFactory();
             InitRepositoryFactory();
             EnsureDataBase();
+            
             InitDataSourceHandlerBuilder();
-            InitParallelismHandlers();
             InitManagers();
+            InitParallelismHandlers();
             Configure();
         }
 
@@ -78,8 +82,9 @@ namespace Blogs.BL.StartApp
                 ReposFactory = repoFactory,
                 HandlerFactory = new BlogDataSourceHandlerFactory(
                     new ConsistencyHandler(connectionFactory, contextFactory, repoFactory)),
-                CancelTokenSource = cancelTokenSource,
-                ParserFactory = new BlogDTOParserFactory()
+                CancelTokenSource = TokenSources.Cancel,
+                ParserFactory = new BlogDTOParserFactory(),
+                EntityConcurrencyHandler = _entityConcurrencyHandler 
             };
         }
 
@@ -106,35 +111,37 @@ namespace Blogs.BL.StartApp
         protected virtual void InitManagers()
         {
             _folderManager = new FolderManager<BlogDataSourceDTO>(
-                dataSourceHandlerBuilder,
-                new FolderDataSourceProvider(_config, new TxFileManager()),
-                ParallelismHandlers[typeof(FolderManager<BlogDataSourceDTO>)]
+                dataSourceHandleBuilder: dataSourceHandlerBuilder,
+                provider: new FolderDataSourceProvider(_config, new TxFileManager()),
+                tokens : TokenSources.Tokens
                 );
 
             _eventedManager = new EventedFileManager<BlogDataSourceDTO>(
-                dataSourceHandlerBuilder,
-                ParallelismHandlers[typeof(EventedFileManager<BlogDataSourceDTO>)],
-                Watcher, 
-                dataSourceFactory
+                dataSourceHandleBuilder:  dataSourceHandlerBuilder,
+                tokens: TokenSources.Tokens,
+                dataSourceFactory: dataSourceFactory,
+                watcher: Watcher
                 );
         }
 
         protected virtual void InitParallelismHandlers()
         {
-            ParallelismHandlers.Add(typeof(FolderManager<BlogDataSourceDTO>),
-                new ParallelismHandler
-                    (
-                    cancelTokenSource,
-                    stopTokenSource,
-                    TaskScheduler.Default,
-                    new ConcurrentBag<Task>()));
-            ParallelismHandlers.Add(typeof(EventedFileManager<BlogDataSourceDTO>),
-                new ParallelismHandler
-                    (
-                    cancelTokenSource,
-                    stopTokenSource,
-                    TaskScheduler.Default,
-                    new ConcurrentBag<Task>()));
+            AsyncHandlers.Add(typeof(FolderManager<BlogDataSourceDTO>),
+                new BaseAsyncHandler<BlogDataSourceDTO>
+                    (_folderManager, 
+                    new ConcurrentBag<Task>(),
+                    TokenSources.Tokens,
+                    new MonitorLocker(),
+                    TaskScheduler.Default
+                    ));
+            AsyncHandlers.Add(typeof(EventedFileManager<BlogDataSourceDTO>),
+                new BaseAsyncHandler<BlogDataSourceDTO>
+                    (_eventedManager,
+                    new ConcurrentBag<Task>(),
+                    TokenSources.Tokens,
+                    new MonitorLocker(),
+                    TaskScheduler.Default
+                    ));
         }
 
         protected virtual void InitWatcher()
@@ -156,6 +163,7 @@ namespace Blogs.BL.StartApp
         {
             _folderManager.TaskFailed += (obj, ds) => { Console.WriteLine("Failed"); };
             _folderManager.TaskCompleted += (obj, ds) => { Console.WriteLine("Completed"); };
+            _folderManager.TaskInterrupted += (obj, ds) => { Console.WriteLine("Interrupted"); };
 
             this.OnStop += (_eventedManager as EventedFileManager<BlogDataSourceDTO>).OnStopHandler;
         }
@@ -173,6 +181,7 @@ namespace Blogs.BL.StartApp
 
         protected virtual void OnStopEvent(object sender, EventArgs args)
         {
+            TokenSources.Stop.Cancel();
             OnStop?.Invoke(this, args);
         }
 
@@ -181,33 +190,42 @@ namespace Blogs.BL.StartApp
             OnStop?.Invoke(this, args);
         }
 
-        public Task Start()
+        public Task StartAsync()
         {
-            return Task.WhenAll(_eventedManager.Run(), _folderManager.Run());
+            return Task.WhenAll(AsyncHandlers.Values.Select(x => x.StartMainProcess()));
         }
 
-        public Task Stop()
+        public Task StopAsync()
         {
             OnStopEvent(this, null);
-            Task.WhenAll(ParallelismHandlers.Values.Select(x => x.RequestStop())).Wait();
-            return Task.WhenAll(ParallelismHandlers.Values.Select(x => x.WaitForCompletion()));
+            var temp = AsyncHandlers.Values;
+            return Task.WhenAll(temp.Select(x => x.WhenAll()).Concat(temp.Select(x => x.WhenMainProcess())) );
         }
 
         public void Dispose()
         {
             if (isDisposed) return;
-            if (cancelTokenSource!=null) cancelTokenSource.Dispose();
-            if (stopTokenSource != null) stopTokenSource.Dispose();
+
+            if (_entityConcurrencyHandler != null) _entityConcurrencyHandler.Dispose();
+            if (TokenSources!=null) TokenSources.Dispose();
             if (Watcher != null) Watcher.Dispose();
+            if (_eventedManager != null) { (_eventedManager as IDisposable).Dispose(); }
             isDisposed = true;
             GC.SuppressFinalize(this);
         }
 
-        public async Task Cancel()
+        ~App()
         {
+            Dispose();
+        }
+
+        public Task CancelAsync()
+        {
+            TokenSources.Stop.Cancel();
+            TokenSources.Cancel.Cancel();
             OnCancelEvent(this, null);
-            await ParallelismHandlers[typeof(EventedFileManager<BlogDataSourceDTO>)].RequestCancel();
-            await ParallelismHandlers[typeof(FolderManager<BlogDataSourceDTO>)].RequestCancel();
+            var temp = AsyncHandlers.Values;
+            return Task.WhenAll(temp.Select(x => x.WhenAll()).Concat(temp.Select(x => x.WhenMainProcess())));
         }
     }
 }

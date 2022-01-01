@@ -1,15 +1,10 @@
 ﻿using Blogs.BL.Abstractions;
 using Blogs.BL.BusinessLogicUoWs;
-using Blogs.BL.DTOEntityParsers;
 using Blogs.BL.DataItemHandlers;
+using Blogs.BL.Infrastructure;
 using Blogs.DAL.Abstractions;
 using Blogs.Persistence.Models;
-using System;
-using System.Collections.Generic;
 using System.Data.Entity;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Threading;
 
 namespace Blogs.BL.DataSourceHandlers
@@ -22,10 +17,12 @@ namespace Blogs.BL.DataSourceHandlers
         public virtual IRepositoryFactory ReposFactory { protected get; set; }
         public virtual IDTOParserFactory<DTOEntity> ParserFactory { protected get; set; }
         public virtual CancellationTokenSource CancelTokenSource { protected get; set; }
+        public virtual EntityConcurrencyHandler EntityConcurrencyHandler { protected get; set; }
+
         public IDataSourceHandler Build(IBlogDataSource<DTOEntity> source)
         {
             var connection = ConnectionFactory.CreateInstance();
-            DbContext context = ContextFactory.CreateInstance(connection, true);
+            DbContext context = ContextFactory.CreateInstance(connection);
 
             IGenericRepository<User> userRepo = ReposFactory.CreateInstance<User>(context);
             IGenericRepository<Blog> blogRepo = ReposFactory.CreateInstance<Blog>(context);
@@ -33,8 +30,8 @@ namespace Blogs.BL.DataSourceHandlers
             
             IDataItemHandler<DTOEntity> itemHandler = new DataItemHandler<DTOEntity>(
                  ParserFactory.CreateInstance(),
-                 new FetchOrInsertUoW<User>(userRepo),
-                 new FetchOrInsertUoW<Blog>(blogRepo),
+                 new FetchOrInsertUoW<User>(userRepo, EntityConcurrencyHandler),
+                 new FetchOrInsertUoW<Blog>(blogRepo, EntityConcurrencyHandler),
                  new AddEntityUoW<Comment>(commentRepo)
                  );
 
