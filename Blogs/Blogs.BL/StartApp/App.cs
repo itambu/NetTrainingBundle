@@ -31,18 +31,18 @@ namespace Blogs.BL.StartApp
         protected IProcessHandler<BlogDataSourceDTO> _folderManager;
         protected IProcessHandler<BlogDataSourceDTO> _eventedManager;
 
-        IConfigurationRoot _config;
-        TokenSourceSet TokenSources = new TokenSourceSet(stop: new CancellationTokenSource(), cancel: new CancellationTokenSource());
-        EntityConcurrencyHandler _entityConcurrencyHandler = new EntityConcurrencyHandler();
+        protected IConfigurationRoot _config;
+        protected TokenSourceSet TokenSources = new TokenSourceSet(stop: new CancellationTokenSource(), cancel: new CancellationTokenSource());
+        protected EntityConcurrencyHandler _entityConcurrencyHandler = new EntityConcurrencyHandler();
 
 
-        FileSystemWatcher Watcher;
-        IDictionary<Type, IAsyncHandler<BlogDataSourceDTO>> AsyncHandlers = new Dictionary<Type, IAsyncHandler<BlogDataSourceDTO>>();
-        IConnectionFactory connectionFactory;
-        IDataSourceFactory<BlogDataSourceDTO> dataSourceFactory;
-        IBlogContextFactory contextFactory;
-        IRepositoryFactory repoFactory;
-        IDataSourceHandleBuilder<BlogDataSourceDTO> dataSourceHandlerBuilder;
+        protected FileSystemWatcher Watcher;
+        protected IDictionary<Type, IAsyncHandler<BlogDataSourceDTO>> AsyncHandlers = new Dictionary<Type, IAsyncHandler<BlogDataSourceDTO>>();
+        protected IConnectionFactory connectionFactory;
+        protected IDataSourceFactory<BlogDataSourceDTO> dataSourceFactory;
+        protected IBlogContextFactory contextFactory;
+        protected IRepositoryFactory repoFactory;
+        protected IDataSourceHandleBuilder<BlogDataSourceDTO> dataSourceHandlerBuilder;
 
         public event EventHandler OnStop;
         public event EventHandler OnCancel;
@@ -161,10 +161,6 @@ namespace Blogs.BL.StartApp
 
         protected virtual void Configure()
         {
-            _folderManager.TaskFailed += (obj, ds) => { Console.WriteLine("Failed"); };
-            _folderManager.TaskCompleted += (obj, ds) => { Console.WriteLine("Completed"); };
-            _folderManager.TaskInterrupted += (obj, ds) => { Console.WriteLine("Interrupted"); };
-
             this.OnStop += (_eventedManager as EventedFileManager<BlogDataSourceDTO>).OnStopHandler;
         }
 

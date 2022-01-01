@@ -1,6 +1,7 @@
 ﻿using System;
 using Blogs.BL.Abstractions;
 using Blogs.BL.StartApp;
+using Blogs.Demo.ConsoleApp;
 
 namespace Blogs.Demo
 {
@@ -8,15 +9,15 @@ namespace Blogs.Demo
     {
         static void Main(string[] args)
         {
-            IAsyncApp app = new App();
-            app.StartAsync().Wait();
-
-            Console.WriteLine("Started and Listening");
-            Console.ReadKey();
-            app.StopAsync().Wait();
-            Console.WriteLine("Stopped");
-            Console.ReadKey();
-            app.Dispose();
+            using (IAsyncApp app = new ConsoleClientApp())
+            {
+                Console.Write("Starting...");
+                app.StartAsync().Wait();
+                Console.WriteLine("listening");
+                Console.ReadKey(true);
+                app.StopAsync().Wait();
+                Console.WriteLine("Stopped");
+            }
         }
     }
 }
