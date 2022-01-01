@@ -1,4 +1,5 @@
 ﻿using System;
+using Blogs.BL.Abstractions;
 using Blogs.BL.StartApp;
 
 namespace Blogs.Demo
@@ -7,7 +8,7 @@ namespace Blogs.Demo
     {
         static void Main(string[] args)
         {
-            App app = new App();
+            IAsyncApp app = new App();
             app.StartAsync().Wait();
 
             Console.WriteLine("Started and Listening");
