@@ -1,5 +1,6 @@
 using Blogs.BL.Abstractions;
 using Blogs.BL.StartApp;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System;
@@ -26,6 +27,7 @@ namespace Blogs.ServiceClient
             var temp = base.StartAsync(stoppingToken);
 
             _app = new ConfiguredApp();
+            _app.OnStop += (sender, arg) => _logger.LogInformation("Successfully stopped");
             _startAppTask = _app.StartAsync();
             return Task.WhenAll(temp, _startAppTask);
         }
@@ -39,7 +41,20 @@ namespace Blogs.ServiceClient
         {
             if (_app!=null)
             {
-                _app.StopAsync().Wait();
+                var _config = (new ConfigurationBuilder())
+                    .SetBasePath(System.IO.Directory.GetCurrentDirectory())
+                    .AddJsonFile("appsettings.json").Build();
+
+                if (!_app.StopAsync().Wait(Convert.ToInt32(_config.GetSection("Timeout").Value)))
+                {
+                    _app.CancelAsync().Wait();
+                    _logger.LogInformation("Cancelled");
+                }
+                else
+                {
+                    _logger.LogInformation("Stopped");
+                }
+
                 _app.Dispose();
                 _app = null;
             }
