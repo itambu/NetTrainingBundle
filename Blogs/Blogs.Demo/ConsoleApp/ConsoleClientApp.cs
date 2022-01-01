@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Blogs.Demo.ConsoleApp
 {
-    public class ConsoleClientApp : App
+    public class ConsoleClientApp : ConfiguredApp
     {
         protected override void Configure()
         {

@@ -11,6 +11,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blogs.DAL", "Blogs.DAL\Blog
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blogs.BL", "Blogs.BL\Blogs.BL.csproj", "{2B8C0EFF-1FFE-42CA-B323-1CC95176AC41}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blogs.ServiceClient", "Blogs.ServiceClient\Blogs.ServiceClient.csproj", "{E19E4BBF-F45F-499C-A638-2CB92EA0446A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{2B8C0EFF-1FFE-42CA-B323-1CC95176AC41}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2B8C0EFF-1FFE-42CA-B323-1CC95176AC41}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2B8C0EFF-1FFE-42CA-B323-1CC95176AC41}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E19E4BBF-F45F-499C-A638-2CB92EA0446A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E19E4BBF-F45F-499C-A638-2CB92EA0446A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E19E4BBF-F45F-499C-A638-2CB92EA0446A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E19E4BBF-F45F-499C-A638-2CB92EA0446A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

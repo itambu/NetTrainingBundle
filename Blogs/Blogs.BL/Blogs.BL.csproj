@@ -16,10 +16,5 @@
     <ProjectReference Include="..\Blogs.Persistence\Blogs.Persistence.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="NewFolder\" />
-  </ItemGroup>
-
-
 
 </Project>

@@ -24,30 +24,20 @@ using System.Threading.Tasks;
 
 namespace Blogs.BL.StartApp
 {
-    public class App : IAsyncApp, IDisposable
+    public class ConfiguredApp : BaseApp, IAsyncApp
     {
-        private bool isDisposed = false;
-
         protected IProcessHandler<BlogDataSourceDTO> _folderManager;
         protected IProcessHandler<BlogDataSourceDTO> _eventedManager;
-
         protected IConfigurationRoot _config;
-        protected TokenSourceSet TokenSources = new TokenSourceSet(stop: new CancellationTokenSource(), cancel: new CancellationTokenSource());
         protected EntityConcurrencyHandler _entityConcurrencyHandler = new EntityConcurrencyHandler();
-
-
         protected FileSystemWatcher Watcher;
-        protected IDictionary<Type, IAsyncHandler<BlogDataSourceDTO>> AsyncHandlers = new Dictionary<Type, IAsyncHandler<BlogDataSourceDTO>>();
         protected IConnectionFactory connectionFactory;
         protected IDataSourceFactory<BlogDataSourceDTO> dataSourceFactory;
         protected IBlogContextFactory contextFactory;
         protected IRepositoryFactory repoFactory;
         protected IDataSourceHandleBuilder<BlogDataSourceDTO> dataSourceHandlerBuilder;
 
-        public event EventHandler OnStop;
-        public event EventHandler OnCancel;
-
-        public App()
+        public ConfiguredApp()
         {
             InitConfig();
             InitWatcher();
@@ -67,7 +57,7 @@ namespace Blogs.BL.StartApp
 
         protected virtual void EnsureDataBase()
         {
-            using (var context = new BlogDbContext(connectionFactory.CreateInstance(), false))
+            using (var context = new BlogDbContext(connectionFactory.CreateInstance(), true))
             {
                 context.Database.CreateIfNotExists();
             }
@@ -164,64 +154,35 @@ namespace Blogs.BL.StartApp
             this.OnStop += (_eventedManager as EventedFileManager<BlogDataSourceDTO>).OnStopHandler;
         }
 
-        #endregion 
-        public Task Pause()
-        {
-            throw new NotImplementedException();
-        }
+        #endregion
 
-        public Task Resume()
-        {
-            throw new NotImplementedException();
-        }
-
-        protected virtual void OnStopEvent(object sender, EventArgs args)
-        {
-            TokenSources.Stop.Cancel();
-            OnStop?.Invoke(this, args);
-        }
-
-        protected virtual void OnCancelEvent(object sender, EventArgs args)
-        {
-            OnStop?.Invoke(this, args);
-        }
-
-        public Task StartAsync()
-        {
-            return Task.WhenAll(AsyncHandlers.Values.Select(x => x.StartMainProcess()));
-        }
-
-        public Task StopAsync()
-        {
-            OnStopEvent(this, null);
-            var temp = AsyncHandlers.Values;
-            return Task.WhenAll(temp.Select(x => x.WhenAll()).Concat(temp.Select(x => x.WhenMainProcess())) );
-        }
-
-        public void Dispose()
+        protected override void Dispose(bool isDisposing)
         {
             if (isDisposed) return;
-
-            if (_entityConcurrencyHandler != null) _entityConcurrencyHandler.Dispose();
-            if (TokenSources!=null) TokenSources.Dispose();
-            if (Watcher != null) Watcher.Dispose();
-            if (_eventedManager != null) { (_eventedManager as IDisposable).Dispose(); }
-            isDisposed = true;
-            GC.SuppressFinalize(this);
+            if (isDisposing)
+            {
+                if (_entityConcurrencyHandler != null)
+                {
+                    _entityConcurrencyHandler.Dispose();
+                    _entityConcurrencyHandler = null;
+                }
+                if (Watcher != null)
+                {
+                    Watcher.Dispose();
+                    Watcher = null;
+                }
+                if (_eventedManager != null) 
+                { 
+                    (_eventedManager as IDisposable).Dispose();
+                    _eventedManager = null;
+                }
+            }
+            base.Dispose(isDisposing);
         }
 
-        ~App()
+        ~ConfiguredApp()
         {
             Dispose();
-        }
-
-        public Task CancelAsync()
-        {
-            TokenSources.Stop.Cancel();
-            TokenSources.Cancel.Cancel();
-            OnCancelEvent(this, null);
-            var temp = AsyncHandlers.Values;
-            return Task.WhenAll(temp.Select(x => x.WhenAll()).Concat(temp.Select(x => x.WhenMainProcess())));
         }
     }
 }
