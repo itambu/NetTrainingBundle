@@ -17,19 +17,27 @@ namespace Blogs.BL.StartApp
         public event EventHandler OnCancel;
         protected TokenSourceSet TokenSources = new TokenSourceSet(stop: new CancellationTokenSource(), cancel: new CancellationTokenSource());
 
+        protected void ThrowIfDisposed()
+        {
+            if (isDisposed)
+                throw new InvalidOperationException("object was disposed");
+        }
+
         protected virtual void OnStopEvent(object sender, EventArgs args)
         {
-            TokenSources.Stop.Cancel();
+            ThrowIfDisposed();
             OnStop?.Invoke(this, args);
         }
 
         protected virtual void OnCancelEvent(object sender, EventArgs args)
         {
+            ThrowIfDisposed();
             OnCancel?.Invoke(this, args);
         }
 
         public Task CancelAsync()
         {
+            ThrowIfDisposed();
             TokenSources.Stop.Cancel();
             TokenSources.Cancel.Cancel();
             OnCancelEvent(this, null);
@@ -39,11 +47,15 @@ namespace Blogs.BL.StartApp
 
         public Task StartAsync()
         {
+            ThrowIfDisposed();
             return Task.WhenAll(AsyncHandlers.Values.Select(x => x.StartMainProcess()));
         }
 
         public Task StopAsync()
         {
+            ThrowIfDisposed();
+
+            TokenSources.Stop.Cancel();
             OnStopEvent(this, null);
             var temp = AsyncHandlers.Values;
             return Task.WhenAll(temp.Select(x => x.WhenAll()).Concat(temp.Select(x => x.WhenMainProcess())));

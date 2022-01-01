@@ -8,8 +8,7 @@ namespace Blogs.BL.ProcessManagers
 {
     public class EventedFileManager<DTOEntity> : BaseFileManager<DTOEntity>, IProcessHandler<DTOEntity>, IDisposable
     {
-        private bool isDisposed = false;
-
+        protected bool isDisposed = false;
         protected FileSystemWatcher Watcher { get; set; }
         protected IDataSourceFactory<DTOEntity> DataSourceFactory { get; set; }
 
@@ -29,18 +28,29 @@ namespace Blogs.BL.ProcessManagers
         /// <summary>
         /// starts listening in sync model app
         /// </summary>
+        /// 
+
+        protected void ThrowIfDisposed()
+        {
+            if (isDisposed)
+                throw new InvalidOperationException("object was disposed");
+        }
+
         public void Start()
         {
+            ThrowIfDisposed();
             StartWatcher();
         }
 
         private void Watcher_Created(object sender, FileSystemEventArgs e)
         {
+            ThrowIfDisposed();
             this.PendingTask(DataSourceFactory.CreateInstance(e.FullPath));
         }
 
         public void OnStopHandler(object sender, EventArgs args)
         {
+            ThrowIfDisposed();
             Watcher.EnableRaisingEvents = false;
             Watcher.Created -= Watcher_Created;
             StopListeningEvent.Set();
@@ -53,22 +63,35 @@ namespace Blogs.BL.ProcessManagers
         /// <param name="pendingTask"></param>
         public override void StartProcess(Action<IBlogDataSource<DTOEntity>> pendingTask)
         {
+            ThrowIfDisposed();
             StartWatcher();
             StopListeningEvent.WaitOne();
         }
 
         protected void StartWatcher()
         {
+            ThrowIfDisposed();
             Watcher.Created += Watcher_Created;
             Watcher.EnableRaisingEvents = true;
         }
 
-        public void Dispose()
+        protected virtual void Dispose(bool isDisposing)
         {
             if (isDisposed) return;
-
-            if (StopListeningEvent!= null) { StopListeningEvent.Dispose(); StopListeningEvent = null;  }
+            if (isDisposing)
+            {
+                if (StopListeningEvent != null) 
+                { 
+                    StopListeningEvent.Dispose(); 
+                    StopListeningEvent = null; 
+                }
+            }
             isDisposed = true;
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
             GC.SuppressFinalize(this);
         }
         ~EventedFileManager()
