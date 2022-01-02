@@ -5,6 +5,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -24,12 +25,15 @@ namespace Blogs.ServiceClient
 
         protected override Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            var temp = base.StartAsync(stoppingToken);
+            //Trace.WriteLine("starting...");
+            _logger.LogInformation("Blogs service successfully started ku-ku");
 
             _app = new ConfiguredApp();
             _app.OnStop += (sender, arg) => _logger.LogInformation("Successfully stopped");
-            _startAppTask = _app.StartAsync();
-            return Task.WhenAll(temp, _startAppTask);
+            return _startAppTask = _app.StartAsync();
+            //return Task.WhenAll(temp, _startAppTask);
+            //return base.StartAsync(stoppingToken);
+            //return Task.CompletedTask;
         }
 
         //public override Task StartAsync(CancellationToken cancellationToken)
@@ -39,7 +43,8 @@ namespace Blogs.ServiceClient
 
         public override Task StopAsync(CancellationToken cancellationToken)
         {
-            if (_app!=null)
+            Task stopTask = null;
+            if (_app != null)
             {
                 var _config = (new ConfigurationBuilder())
                     .SetBasePath(System.IO.Directory.GetCurrentDirectory())
@@ -58,7 +63,7 @@ namespace Blogs.ServiceClient
                 _app.Dispose();
                 _app = null;
             }
-            return base.StopAsync(cancellationToken);
+            return Task.CompletedTask;
         }
 
     }

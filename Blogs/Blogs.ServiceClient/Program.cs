@@ -19,17 +19,29 @@ namespace Blogs.ServiceClient
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
                 .UseWindowsService()
-                .ConfigureLogging((context, logging)=>
+                .ConfigureLogging((loggerFactory) =>
                 {
-                    logging.AddEventLog(new EventLogSettings()
-                    {
-                        SourceName = "Blog Service",
-                        LogName = "Blogs"
-                    });
+                   loggerFactory.AddEventLog(new EventLogSettings()
+                   {
+                       LogName = "Blog Log",
+                       SourceName = "BlogService",
+                       Filter = (message, level) => true 
+                   });
+                    //.ClearProviders()
+                    //.AddConfiguration(context.Configuration.GetSection("Logging"))
+                    //.AddEventLog(new EventLogSettings()
+                    //{
+                    //    SourceName = "Blog Service",
+                    //    LogName = "BlogLog"
+                    //})
+                    ;
+                    
                 })
                 .ConfigureServices((hostContext, services) =>
                 {
                     services.AddHostedService<Worker>();
-                });
+                })
+
+                ;
     }
 }
