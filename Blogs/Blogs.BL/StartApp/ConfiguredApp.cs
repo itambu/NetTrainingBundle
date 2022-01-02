@@ -28,7 +28,6 @@ namespace Blogs.BL.StartApp
     {
         protected IProcessHandler<BlogDataSourceDTO> _folderManager;
         protected IProcessHandler<BlogDataSourceDTO> _eventedManager;
-        protected IConfigurationRoot _config;
         protected EntityConcurrencyHandler _entityConcurrencyHandler = new EntityConcurrencyHandler();
         protected FileSystemWatcher Watcher;
         protected IConnectionFactory connectionFactory;
@@ -37,9 +36,9 @@ namespace Blogs.BL.StartApp
         protected IRepositoryFactory repoFactory;
         protected IDataSourceHandleBuilder<BlogDataSourceDTO> dataSourceHandlerBuilder;
 
-        public ConfiguredApp()
+        public ConfiguredApp(AppOptions appOptions) : base(appOptions)
         {
-            InitConfig();
+            //InitConfig();
             InitWatcher();
             InitConnectionFactory();
             InitDataSourceFactory();
@@ -90,19 +89,19 @@ namespace Blogs.BL.StartApp
 
         protected virtual void InitDataSourceFactory()
         {
-            dataSourceFactory = new DataSourceFactory(_config);
+            dataSourceFactory = new DataSourceFactory(_appOptions.FolderOptions);
         }
 
         protected virtual void InitConnectionFactory()
         {
-            connectionFactory = new SqlConnectionFactory(_config);
+            connectionFactory = new SqlConnectionFactory(_appOptions.ConnectionOptions.Default);
         }
 
         protected virtual void InitManagers()
         {
             _folderManager = new FolderManager<BlogDataSourceDTO>(
                 dataSourceHandleBuilder: dataSourceHandlerBuilder,
-                provider: new FolderDataSourceProvider(_config, new TxFileManager()),
+                provider: new FolderDataSourceProvider(_appOptions.FolderOptions, new TxFileManager()),
                 tokens : TokenSources.Tokens
                 );
 
@@ -137,17 +136,17 @@ namespace Blogs.BL.StartApp
         protected virtual void InitWatcher()
         {
             Watcher = new FileSystemWatcher(
-                _config.GetSection("FolderOptions").GetSection("source").Value,
-                _config.GetSection("FolderOptions").GetSection("type").Value
+                _appOptions.FolderOptions.Source,
+                _appOptions.FolderOptions.Pattern
                 );
         }
 
-        protected virtual void InitConfig()
-        {
-            _config = (new ConfigurationBuilder())
-                .SetBasePath(System.IO.Directory.GetCurrentDirectory())
-                .AddJsonFile("appsettings.json").Build();
-        }
+        //protected virtual void InitConfig()
+        //{
+        //    //_config = (new ConfigurationBuilder())
+        //    //    .SetBasePath(System.IO.Directory.GetCurrentDirectory())
+        //    //    .AddJsonFile("appsettings.json").Build();
+        //}
 
         protected virtual void Configure()
         {

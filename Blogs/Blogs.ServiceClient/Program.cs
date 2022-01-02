@@ -1,3 +1,4 @@
+using Blogs.BL.Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -40,8 +41,7 @@ namespace Blogs.ServiceClient
                 .ConfigureServices((hostContext, services) =>
                 {
                     services.AddHostedService<Worker>();
-                })
-
-                ;
+                    services.Configure<AppOptions>(hostContext.Configuration.GetSection("AppOptions"));
+                });
     }
 }

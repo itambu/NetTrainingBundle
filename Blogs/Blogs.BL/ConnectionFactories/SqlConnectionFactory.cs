@@ -12,17 +12,17 @@ namespace Blogs.BL.ConnectionFactories
 {
     public class SqlConnectionFactory : IConnectionFactory
     {
-        private readonly IConfigurationRoot _config;
+        private readonly string _connectionStr;
         public DbConnection CreateInstance(bool openOnCreate = false)
         {
-            var temp = new SqlConnection(_config.GetConnectionString("blog_db_test"));
+            var temp = new SqlConnection(_connectionStr);
             if (openOnCreate) temp.Open();
             return temp;
         }
 
-        public SqlConnectionFactory(IConfigurationRoot config)
+        public SqlConnectionFactory(string connectionString)
         {
-            _config = config;
+            _connectionStr = connectionString;
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using Blogs.BL.StartApp;
+﻿using Blogs.BL.Infrastructure;
+using Blogs.BL.StartApp;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,5 +21,11 @@ namespace Blogs.Demo.ConsoleApp
             _eventedManager.TaskCompleted += (obj, ds) => { Console.WriteLine("Completed"); };
             _eventedManager.TaskInterrupted += (obj, ds) => { Console.WriteLine("Interrupted"); };
         }
+
+        public ConsoleClientApp(AppOptions appOptions) : base(appOptions)
+        {
+
+        }
+
     }
 }

@@ -1,7 +1,9 @@
 ﻿using System;
 using Blogs.BL.Abstractions;
+using Blogs.BL.Infrastructure;
 using Blogs.BL.StartApp;
 using Blogs.Demo.ConsoleApp;
+using Microsoft.Extensions.Configuration;
 
 namespace Blogs.Demo
 {
@@ -9,7 +11,11 @@ namespace Blogs.Demo
     {
         static void Main(string[] args)
         {
-            using (IAsyncApp app = new ConsoleClientApp())
+            IConfiguration _config = (new ConfigurationBuilder())
+               .SetBasePath(System.IO.Directory.GetCurrentDirectory())
+               .AddJsonFile("appsettings.json").Build();
+
+            using (IAsyncApp app = new ConsoleClientApp(_config.GetSection("AppOptions").Get<AppOptions>()))
             {
                 Console.Write("Starting...");
                 app.StartAsync().Wait();

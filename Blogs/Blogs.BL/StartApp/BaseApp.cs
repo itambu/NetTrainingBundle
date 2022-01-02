@@ -16,6 +16,12 @@ namespace Blogs.BL.StartApp
         public event EventHandler OnStop;
         public event EventHandler OnCancel;
         protected TokenSourceSet TokenSources = new TokenSourceSet(stop: new CancellationTokenSource(), cancel: new CancellationTokenSource());
+        protected AppOptions _appOptions;
+
+        public BaseApp(AppOptions folderOptions)
+        {
+            _appOptions = folderOptions;
+        }
 
         protected void ThrowIfDisposed()
         {

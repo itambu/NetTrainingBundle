@@ -1,7 +1,7 @@
 ﻿using Blogs.BL.Abstractions;
 using Blogs.BL.BlogDataSources;
+using Blogs.BL.Infrastructure;
 using ChinhDo.Transactions;
-using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,15 +12,15 @@ namespace Blogs.BL.DataSourceFactories
 {
     public class DataSourceFactory : IDataSourceFactory<BlogDataSourceDTO>
     {
-        private IConfigurationRoot _config;
+        private AppFolderOptions _folderOptions;
         public IBlogDataSource<BlogDataSourceDTO> CreateInstance(string fileName)
         {
-            return new BlogDataSource(fileName, _config, new TxFileManager());
+            return new BlogDataSource(fileName, _folderOptions.Target, new TxFileManager());
         }
 
-        public DataSourceFactory(IConfigurationRoot config)
+        public DataSourceFactory(AppFolderOptions folderOptions)
         {
-            _config = config;
+            _folderOptions = folderOptions;
         }
     }
 }

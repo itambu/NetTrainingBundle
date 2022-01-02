@@ -1,5 +1,6 @@
 ﻿using Blogs.BL.Abstractions;
 using Blogs.BL.BlogDataSources;
+using Blogs.BL.Infrastructure;
 using ChinhDo.Transactions;
 using Microsoft.Extensions.Configuration;
 using System;
@@ -14,22 +15,21 @@ namespace Blogs.BL.FolderDataSourceProviders
 {
     public class FolderDataSourceProvider : IEnumerable<IBlogDataSource<BlogDataSourceDTO>>
     {
-        private IConfigurationRoot _config;
+        private AppFolderOptions _appFolderOptions;
         private IFileManager _fileManager;
 
-        public FolderDataSourceProvider(IConfigurationRoot config, IFileManager fileManager)
+        public FolderDataSourceProvider(AppFolderOptions appFolderOptions, IFileManager fileManager)
         {
-            _config = config;
+            _appFolderOptions = appFolderOptions;
             _fileManager = fileManager;
         }
 
         public IEnumerator<IBlogDataSource<BlogDataSourceDTO>> GetEnumerator()
         {
-            var temp = Directory.GetFiles(_config.GetSection("FolderOptions").GetSection("source").Value,
-            _config.GetSection("FolderOptions").GetSection("type").Value);
+            var temp = Directory.GetFiles(_appFolderOptions.Source,_appFolderOptions.Pattern);
             foreach (var f in temp)
             {
-                yield return new BlogDataSource(f, _config, _fileManager);
+                yield return new BlogDataSource(f, _appFolderOptions.Target, _fileManager);
             }
         }
         IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();

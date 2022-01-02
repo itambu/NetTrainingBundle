@@ -16,15 +16,15 @@ namespace Blogs.BL.BlogDataSources
         private readonly string _sourceFileName;
         private bool isDisposed = false;
 
-        private IConfigurationRoot _config;
+        protected string TargetPath { get; set; }
         private IFileManager _fileManager;
         private readonly Guid _id = Guid.NewGuid();
         public Guid Id => _id;
 
-        public BlogDataSource(string sourceFileName, IConfigurationRoot config, IFileManager fileManager)
+        public BlogDataSource(string sourceFileName, string targetPath, IFileManager fileManager)
         {
             _sourceFileName = sourceFileName;
-            _config = config;
+            TargetPath = targetPath;
             _fileManager = fileManager;
         }
 
@@ -32,7 +32,7 @@ namespace Blogs.BL.BlogDataSources
         {
             ValidateState();
 
-            var filename = String.Concat(_config.GetSection("FolderOptions").GetSection("target").Value, Path.GetFileName(_sourceFileName));
+            var filename = String.Concat(TargetPath, Path.GetFileName(_sourceFileName));
             _fileManager.Move(_sourceFileName, filename);
             Dispose();
         }
@@ -48,7 +48,6 @@ namespace Blogs.BL.BlogDataSources
         {
             if (!isDisposed)
             {
-                _config = null;
                 GC.SuppressFinalize(this);
                 isDisposed = true;
             }
