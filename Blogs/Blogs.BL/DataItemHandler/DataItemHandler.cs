@@ -83,19 +83,8 @@ namespace Blogs.BL.DataItemHandlers
                 && x.LastName == DTOParser.User.LastName,
                 new User() { FirstName = DTOParser.User.FirstName, LastName = DTOParser.User.LastName }
                 );
-
-            if (user == null)
-            {
-
-            }
-
             blog = blogUoW.PerformAction(x => x.Name == DTOParser.Blog.Name,
                 new Blog() { Name = DTOParser.Blog.Name, User = user });
-            if (blog == null)
-            {
-
-            }
-
             commentUoW.PerformAction(new Comment() { Text = DTOParser.Comment.Text, User = user, Blog = blog, Session = DTOParser.Comment.Session });
         }
     }

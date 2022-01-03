@@ -12,15 +12,8 @@ namespace Blogs.BL.BusinessLogicUoWs
     {
         public void PerformAction(Entity item)
         {
-            try
-            {
-                Repository.Add(item);
-                Repository.Context.SaveChanges();
-            }
-            catch(Exception e)
-            {
-
-            }
+            Repository.Add(item);
+            Repository.Context.SaveChanges();
         }
 
         public AddEntityUoW(IGenericRepository<Entity> repo) : base(repo)

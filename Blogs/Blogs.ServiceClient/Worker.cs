@@ -30,7 +30,7 @@ namespace Blogs.ServiceClient
 
         protected override Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            _logger.LogInformation("Blogs service successfully started");
+            
 
             _app = new UniversalApp(_appOptions, 
                 (sender, ds)=> _logger.LogInformation($"Task on file {ds} failed"),
@@ -41,7 +41,9 @@ namespace Blogs.ServiceClient
             _app.OnStop += (sender, arg) => _logger.LogInformation("Blogs service successfully stopped");
             _app.OnCancel += (sender, arg) => _logger.LogInformation("Service stopped with cancelling of the current tasks");
 
-            return _startAppTask = _app.StartAsync();
+            _startAppTask = _app.StartAsync();
+            _logger.LogInformation("Blogs service successfully started");
+            return Task.CompletedTask;
         }
 
         public override Task StopAsync(CancellationToken cancellationToken)
