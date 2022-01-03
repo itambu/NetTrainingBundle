@@ -1,6 +1,7 @@
 using Blogs.BL.Abstractions;
 using Blogs.BL.Infrastructure;
 using Blogs.BL.StartApp;
+using Blogs.ServiceClient.UniversalClient;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -29,42 +30,34 @@ namespace Blogs.ServiceClient
 
         protected override Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            //Trace.WriteLine("starting...");
-            _logger.LogInformation("Blogs service successfully started ku-ku");
+            _logger.LogInformation("Blogs service successfully started");
 
-            _app = new ConfiguredApp(_appOptions);
-            _app.OnStop += (sender, arg) => _logger.LogInformation("Successfully stopped");
+            _app = new UniversalApp(_appOptions, 
+                (sender, ds)=> _logger.LogInformation($"Task on file {ds} failed"),
+                (sender, ds) => _logger.LogInformation($"Task on file {ds} completed"),
+                (sender, ds) => _logger.LogInformation($"Task on file {ds} interrupted")
+            );
+
+            _app.OnStop += (sender, arg) => _logger.LogInformation("Blogs service successfully stopped");
+            _app.OnCancel += (sender, arg) => _logger.LogInformation("Service stopped with cancelling of the current tasks");
+
             return _startAppTask = _app.StartAsync();
-            //return Task.WhenAll(temp, _startAppTask);
-            //return base.StartAsync(stoppingToken);
-            //return Task.CompletedTask;
         }
-
-        //public override Task StartAsync(CancellationToken cancellationToken)
-        //{
-
-        //}
 
         public override Task StopAsync(CancellationToken cancellationToken)
         {
-            if (_app != null)
+            if (_startAppTask != null)
             {
-                var _config = (new ConfigurationBuilder())
-                    .SetBasePath(System.IO.Directory.GetCurrentDirectory())
-                    .AddJsonFile("appsettings.json").Build();
-
-                if (!_app.StopAsync().Wait(Convert.ToInt32(_config.GetSection("Timeout").Value)))
+                _startAppTask.Wait();
+                if (_app != null)
                 {
-                    _app.CancelAsync().Wait();
-                    _logger.LogInformation("Cancelled");
+                    if (!_app.StopAsync().Wait(_appOptions.TimeoutForStop))
+                    {
+                        _app.CancelAsync().Wait();
+                    }
+                    _app.Dispose();
+                    _app = null;
                 }
-                else
-                {
-                    _logger.LogInformation("Stopped");
-                }
-
-                _app.Dispose();
-                _app = null;
             }
             return Task.CompletedTask;
         }

@@ -28,7 +28,7 @@ namespace Blogs.BL.StartApp
     {
         protected IProcessHandler<BlogDataSourceDTO> _folderManager;
         protected IProcessHandler<BlogDataSourceDTO> _eventedManager;
-        protected EntityConcurrencyHandler _entityConcurrencyHandler = new EntityConcurrencyHandler();
+        protected EntityConcurrencyHandler _entityConcurrencyHandler;
         protected FileSystemWatcher Watcher;
         protected IConnectionFactory connectionFactory;
         protected IDataSourceFactory<BlogDataSourceDTO> dataSourceFactory;
@@ -41,6 +41,7 @@ namespace Blogs.BL.StartApp
             //InitConfig();
             InitWatcher();
             InitConnectionFactory();
+            InitConcurrencyHandler();
             InitDataSourceFactory();
             InitDbContextFactory();
             InitRepositoryFactory();
@@ -48,11 +49,16 @@ namespace Blogs.BL.StartApp
             
             InitDataSourceHandlerBuilder();
             InitManagers();
-            InitParallelismHandlers();
-            Configure();
+            InitAsyncHandlers();
+            ConfigureStopEventOnEventedManager();
         }
 
         #region Configuration
+
+        protected virtual void InitConcurrencyHandler()
+        {
+            _entityConcurrencyHandler = new EntityConcurrencyHandler();
+        }
 
         protected virtual void EnsureDataBase()
         {
@@ -71,7 +77,7 @@ namespace Blogs.BL.StartApp
                 ReposFactory = repoFactory,
                 HandlerFactory = new BlogDataSourceHandlerFactory(
                     new ConsistencyHandler(connectionFactory, contextFactory, repoFactory)),
-                CancelTokenSource = TokenSources.Cancel,
+                CancelToken = TokenSources.Cancel.Token,
                 ParserFactory = new BlogDTOParserFactory(),
                 EntityConcurrencyHandler = _entityConcurrencyHandler 
             };
@@ -113,7 +119,7 @@ namespace Blogs.BL.StartApp
                 );
         }
 
-        protected virtual void InitParallelismHandlers()
+        protected virtual void InitAsyncHandlers()
         {
             AsyncHandlers.Add(typeof(FolderManager<BlogDataSourceDTO>),
                 new BaseAsyncHandler<BlogDataSourceDTO>
@@ -148,7 +154,7 @@ namespace Blogs.BL.StartApp
         //    //    .AddJsonFile("appsettings.json").Build();
         //}
 
-        protected virtual void Configure()
+        protected void ConfigureStopEventOnEventedManager()
         {
             this.OnStop += (_eventedManager as EventedFileManager<BlogDataSourceDTO>).OnStopHandler;
         }

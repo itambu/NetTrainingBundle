@@ -16,7 +16,7 @@ namespace Blogs.BL.DataSourceHandlers
         public virtual IBlogContextFactory ContextFactory { protected get; set; }
         public virtual IRepositoryFactory ReposFactory { protected get; set; }
         public virtual IDTOParserFactory<DTOEntity> ParserFactory { protected get; set; }
-        public virtual CancellationTokenSource CancelTokenSource { protected get; set; }
+        public virtual CancellationToken CancelToken { protected get; set; }
         public virtual EntityConcurrencyHandler EntityConcurrencyHandler { protected get; set; }
 
         public IDataSourceHandler Build(IBlogDataSource<DTOEntity> source)
@@ -35,7 +35,7 @@ namespace Blogs.BL.DataSourceHandlers
                  new AddEntityUoW<Comment>(commentRepo)
                  );
 
-            return HandlerFactory.CreateInstance(source, itemHandler, CancelTokenSource.Token);
+            return HandlerFactory.CreateInstance(source, itemHandler, CancelToken);
         }
     }
 }

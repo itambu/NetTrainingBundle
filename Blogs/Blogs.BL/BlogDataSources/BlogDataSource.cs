@@ -86,5 +86,10 @@ namespace Blogs.BL.BlogDataSources
         {
             return this.GetEnumerator();
         }
+
+        public override string ToString()
+        {
+            return this._sourceFileName;
+        }
     }
 }

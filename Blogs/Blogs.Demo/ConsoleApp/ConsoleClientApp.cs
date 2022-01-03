@@ -10,9 +10,9 @@ namespace Blogs.Demo.ConsoleApp
 {
     public class ConsoleClientApp : ConfiguredApp
     {
-        protected override void Configure()
+        protected void Configure()
         {
-            base.Configure();
+            base.ConfigureStopEventOnEventedManager();
             _folderManager.TaskFailed += (obj, ds) => { Console.WriteLine("Failed"); };
             _folderManager.TaskCompleted += (obj, ds) => { Console.WriteLine("Completed"); };
             _folderManager.TaskInterrupted += (obj, ds) => { Console.WriteLine("Interrupted"); };
@@ -24,7 +24,7 @@ namespace Blogs.Demo.ConsoleApp
 
         public ConsoleClientApp(AppOptions appOptions) : base(appOptions)
         {
-
+            Configure();
         }
 
     }
