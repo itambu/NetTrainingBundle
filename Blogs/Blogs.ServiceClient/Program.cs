@@ -27,13 +27,13 @@ namespace Blogs.ServiceClient
             return Host.CreateDefaultBuilder(args)
             .ConfigureAppConfiguration((hostContext, builder) =>
             {
-                builder.SetBasePath(AppDomain.CurrentDomain.BaseDirectory);
+                //builder.SetBasePath(AppDomain.CurrentDomain.BaseDirectory);
                 builder.AddJsonFile("appsettings.json", true, true);
                 builder.AddJsonFile($"appsettings.{hostContext.HostingEnvironment.EnvironmentName}.json", true, true);
             })
             .ConfigureHostConfiguration(hostBuilder =>
             {
-                hostBuilder.SetBasePath(AppDomain.CurrentDomain.BaseDirectory);
+                //hostBuilder.SetBasePath(AppDomain.CurrentDomain.BaseDirectory);
 
             })
             .UseWindowsService()
