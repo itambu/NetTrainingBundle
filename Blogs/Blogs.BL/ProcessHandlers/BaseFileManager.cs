@@ -11,9 +11,9 @@ namespace Blogs.BL.ProcessManagers
         protected ActionTokenSet Tokens { get; private set; }
         protected IDataSourceHandleBuilder<DTOEntity> DataSourceHandlerBuilder { get; set; }
         
-        public event EventHandler<IBlogDataSource<DTOEntity>> TaskCompleted;
-        public event EventHandler<IBlogDataSource<DTOEntity>> TaskFailed;
-        public event EventHandler<IBlogDataSource<DTOEntity>> TaskInterrupted;
+        public event EventHandler<IDataSource<DTOEntity>> TaskCompleted;
+        public event EventHandler<IDataSource<DTOEntity>> TaskFailed;
+        public event EventHandler<IDataSource<DTOEntity>> TaskInterrupted;
 
         public BaseFileManager(IDataSourceHandleBuilder<DTOEntity> dataSourceHandleBuilder,
             ActionTokenSet tokens)
@@ -22,31 +22,31 @@ namespace Blogs.BL.ProcessManagers
             Tokens = tokens;
         }
 
-        protected virtual void OnTaskCompleted(object sender, IBlogDataSource<DTOEntity> source)
+        protected virtual void OnTaskCompleted(object sender, IDataSource<DTOEntity> source)
         {
-            EventHandler<IBlogDataSource<DTOEntity>> temp = null;
+            EventHandler<IDataSource<DTOEntity>> temp = null;
             Interlocked.Exchange(ref temp, TaskCompleted);
             temp?.Invoke(sender, source);
         }
 
-        protected virtual void OnTaskInterrupted(object sender, IBlogDataSource<DTOEntity> source)
+        protected virtual void OnTaskInterrupted(object sender, IDataSource<DTOEntity> source)
         {
-            EventHandler<IBlogDataSource<DTOEntity>> temp = null;
+            EventHandler<IDataSource<DTOEntity>> temp = null;
             Interlocked.Exchange(ref temp, TaskInterrupted);
             temp?.Invoke(sender, source);
         }
 
-        protected virtual void OnTaskFailed(object sender, IBlogDataSource<DTOEntity> source)
+        protected virtual void OnTaskFailed(object sender, IDataSource<DTOEntity> source)
         {
-            EventHandler<IBlogDataSource<DTOEntity>> temp = null;
+            EventHandler<IDataSource<DTOEntity>> temp = null;
             Interlocked.Exchange(ref temp, TaskFailed);
             temp?.Invoke(sender, source);
         }
 
-        public abstract void StartProcess(Action<IBlogDataSource<DTOEntity>> pendingTask);
+        public abstract void StartProcess(Action<IDataSource<DTOEntity>> pendingTask);
 
         public virtual void PendingTask(
-            IBlogDataSource<DTOEntity> source
+            IDataSource<DTOEntity> source
             )
         {
             TaskCompletionStatus status = TaskCompletionStatus.Success;
@@ -75,7 +75,7 @@ namespace Blogs.BL.ProcessManagers
             Callback(status, source);
         }
 
-        public virtual void Callback(TaskCompletionStatus status, IBlogDataSource<DTOEntity> source)
+        public virtual void Callback(TaskCompletionStatus status, IDataSource<DTOEntity> source)
         {
             switch (status)
             {

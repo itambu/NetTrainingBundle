@@ -42,7 +42,7 @@ namespace Blogs.DAL.Repositories
             Context.Entry(item).State = EntityState.Detached;
         }
 
-        public void Dispose()
+        protected virtual void Dispose(bool isDisposing)
         {
             if (isDisposed) return;
 
@@ -53,6 +53,11 @@ namespace Blogs.DAL.Repositories
             }
 
             isDisposed = true;
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
             GC.SuppressFinalize(this);
         }
 
@@ -78,7 +83,10 @@ namespace Blogs.DAL.Repositories
 
         public void Remove(IEnumerable<T> items)
         {
-            throw new NotImplementedException();
+            foreach (T item in items)
+            {
+                Context.Set<T>().Remove(item);
+            }
         }
 
         public void Update(T item)

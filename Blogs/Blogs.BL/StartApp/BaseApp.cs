@@ -11,7 +11,7 @@ namespace Blogs.BL.StartApp
 {
     public abstract class BaseApp : IAsyncApp
     {
-        protected bool isDisposed;
+        private bool isDisposed;
         protected IDictionary<Type, IAsyncHandler<BlogDataSourceDTO>> AsyncHandlers = new Dictionary<Type, IAsyncHandler<BlogDataSourceDTO>>();
         public event EventHandler OnStop;
         public event EventHandler OnCancel;
@@ -71,6 +71,11 @@ namespace Blogs.BL.StartApp
         {
             Dispose(true);
             GC.SuppressFinalize(this);
+        }
+
+        ~BaseApp()
+        {
+            Dispose(false);
         }
 
         protected virtual void Dispose(bool isDisposing)

@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace Blogs.BL.FolderDataSourceProviders
 {
-    public class FolderDataSourceProvider : IEnumerable<IBlogDataSource<BlogDataSourceDTO>>
+    public class FolderDataSourceProvider : IEnumerable<IDataSource<BlogDataSourceDTO>>
     {
         private AppFolderOptions _appFolderOptions;
         private IFileManager _fileManager;
@@ -24,7 +24,7 @@ namespace Blogs.BL.FolderDataSourceProviders
             _fileManager = fileManager;
         }
 
-        public IEnumerator<IBlogDataSource<BlogDataSourceDTO>> GetEnumerator()
+        public IEnumerator<IDataSource<BlogDataSourceDTO>> GetEnumerator()
         {
             var temp = Directory.GetFiles(_appFolderOptions.Source,_appFolderOptions.Pattern);
             foreach (var f in temp)

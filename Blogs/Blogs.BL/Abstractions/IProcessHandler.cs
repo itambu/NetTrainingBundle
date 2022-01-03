@@ -8,11 +8,11 @@ namespace Blogs.BL.Abstractions
 {
     public interface IProcessHandler<DTOEntity>
     {
-        void StartProcess(Action<IBlogDataSource<DTOEntity>> pendingTask);
-        void PendingTask(IBlogDataSource<DTOEntity> source);
+        void StartProcess(Action<IDataSource<DTOEntity>> pendingTask);
+        void PendingTask(IDataSource<DTOEntity> source);
 
-        public event EventHandler<IBlogDataSource<DTOEntity>> TaskCompleted;
-        public event EventHandler<IBlogDataSource<DTOEntity>> TaskFailed;
-        public event EventHandler<IBlogDataSource<DTOEntity>> TaskInterrupted;
+        public event EventHandler<IDataSource<DTOEntity>> TaskCompleted;
+        public event EventHandler<IDataSource<DTOEntity>> TaskFailed;
+        public event EventHandler<IDataSource<DTOEntity>> TaskInterrupted;
     }
 }

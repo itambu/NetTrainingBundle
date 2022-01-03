@@ -8,6 +8,6 @@ namespace Blogs.BL.Abstractions
 {
     public interface IDataSourceHandleBuilder<DTOEntity>
     {
-        IDataSourceHandler Build(IBlogDataSource<DTOEntity> source);
+        IDataSourceHandler Build(IDataSource<DTOEntity> source);
     }
 }

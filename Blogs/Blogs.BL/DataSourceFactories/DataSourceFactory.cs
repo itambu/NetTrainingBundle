@@ -13,7 +13,7 @@ namespace Blogs.BL.DataSourceFactories
     public class DataSourceFactory : IDataSourceFactory<BlogDataSourceDTO>
     {
         private AppFolderOptions _folderOptions;
-        public IBlogDataSource<BlogDataSourceDTO> CreateInstance(string fileName)
+        public IDataSource<BlogDataSourceDTO> CreateInstance(string fileName)
         {
             return new BlogDataSource(fileName, _folderOptions.Target, new TxFileManager());
         }

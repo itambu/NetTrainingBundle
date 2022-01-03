@@ -8,6 +8,6 @@ namespace Blogs.BL.Abstractions
 {
     public interface IDataSourceFactory<DTOEntity>
     {
-        IBlogDataSource<DTOEntity> CreateInstance(string fileName);
+        IDataSource<DTOEntity> CreateInstance(string fileName);
     }
 }

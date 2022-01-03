@@ -12,7 +12,7 @@ namespace Blogs.BL.DataSourceHandlers
     {
         private readonly IConsistencyHandler _consistencyHandler;
         public IDataSourceHandler CreateInstance(
-            IBlogDataSource<BlogDataSourceDTO> source, 
+            IDataSource<BlogDataSourceDTO> source, 
             IDataItemHandler<BlogDataSourceDTO> handler,
             CancellationToken cancellationToken)
         {

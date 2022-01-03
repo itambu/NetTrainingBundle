@@ -10,7 +10,7 @@ namespace Blogs.BL.Abstractions
     public interface IDataSourceHandlerFactory<DTOEntity>
     {
         IDataSourceHandler CreateInstance(
-            IBlogDataSource<DTOEntity> source, 
+            IDataSource<DTOEntity> source, 
             IDataItemHandler<DTOEntity> handler, 
             CancellationToken cancellationToken);
     }

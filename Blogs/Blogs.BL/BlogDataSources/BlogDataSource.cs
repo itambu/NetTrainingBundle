@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace Blogs.BL.BlogDataSources
 {
-    public class BlogDataSource : IBlogDataSource<BlogDataSourceDTO>
+    public class BlogDataSource : IDataSource<BlogDataSourceDTO>
     {
         private readonly string _sourceFileName;
         private bool isDisposed = false;
@@ -20,7 +20,7 @@ namespace Blogs.BL.BlogDataSources
         private IFileManager _fileManager;
         private readonly Guid _id = Guid.NewGuid();
         public Guid Id => _id;
-
+        private StreamReader reader;
         public BlogDataSource(string sourceFileName, string targetPath, IFileManager fileManager)
         {
             _sourceFileName = sourceFileName;
@@ -31,7 +31,6 @@ namespace Blogs.BL.BlogDataSources
         public void Backup()
         {
             ValidateState();
-
             var filename = String.Concat(TargetPath, Path.GetFileName(_sourceFileName));
             _fileManager.Move(_sourceFileName, filename);
             Dispose();
@@ -44,24 +43,40 @@ namespace Blogs.BL.BlogDataSources
                 throw new InvalidOperationException("Data Source is unvailable");
             }
         }
-        public void Dispose()
+
+        protected virtual void Dispose(bool isDisposing)
         {
             if (!isDisposed)
             {
-                GC.SuppressFinalize(this);
+                if (isDisposing)
+                {
+                    if (reader != null)
+                    {
+                        reader.Dispose();
+                        reader = null;
+                    }
+                    _fileManager = null;
+                    
+                }
                 isDisposed = true;
             }
         }
 
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
         ~BlogDataSource()
         {
-            Dispose();
+            Dispose(false);
         }
 
         public IEnumerator<BlogDataSourceDTO> GetEnumerator()
         {
             ValidateState();
-            using (StreamReader reader = new StreamReader(_sourceFileName))
+            using (reader = new StreamReader(_sourceFileName))
             {
 
                 string currentLine = reader.ReadLine();

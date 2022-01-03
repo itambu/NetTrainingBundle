@@ -16,13 +16,14 @@ namespace Blogs.BL.DataSourceHandlers
 {
     public class DataSourceHandler<DTOEntity> : BaseHandler,  IDataSourceHandler
     {
-        protected IBlogDataSource<DTOEntity> DataSource { get; private set; }
+        private bool isDisposed = false;
+        protected IDataSource<DTOEntity> DataSource { get; private set; }
         protected IDataItemHandler<DTOEntity> ItemHandler { get; private set; }
 
         protected IConsistencyHandler ConsistancyHandler { get; private set; }
 
         public DataSourceHandler(
-            IBlogDataSource<DTOEntity> dataSource, 
+            IDataSource<DTOEntity> dataSource, 
             IDataItemHandler<DTOEntity> itemHandler, 
             CancellationToken cancelToken,
             IConsistencyHandler consistancyHandler
@@ -80,17 +81,30 @@ namespace Blogs.BL.DataSourceHandlers
             }
         }
 
-        public virtual void Dispose()
+        protected override void Dispose(bool isDisposing)
         {
             if (isDisposed) return;
 
-            if (ItemHandler != null)
+            if (isDisposing)
             {
-                ItemHandler.Dispose();
-                ItemHandler = null;
-                isDisposed = true;
+                if (ItemHandler != null)
+                {
+                    ItemHandler.Dispose();
+                    ItemHandler = null;
+                    isDisposed = true;
+                }
             }
+            isDisposed = true;
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
             GC.SuppressFinalize(this);
+        }
+        ~DataSourceHandler()
+        {
+            Dispose(false);
         }
     }
 }

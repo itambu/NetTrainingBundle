@@ -19,7 +19,7 @@ namespace Blogs.BL.DataSourceHandlers
         public virtual CancellationToken CancelToken { protected get; set; }
         public virtual EntityConcurrencyHandler EntityConcurrencyHandler { protected get; set; }
 
-        public IDataSourceHandler Build(IBlogDataSource<DTOEntity> source)
+        public IDataSourceHandler Build(IDataSource<DTOEntity> source)
         {
             var connection = ConnectionFactory.CreateInstance();
             DbContext context = ContextFactory.CreateInstance(connection);

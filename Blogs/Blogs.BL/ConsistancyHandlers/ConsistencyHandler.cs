@@ -50,7 +50,6 @@ namespace Blogs.BL.ConsistancyHandlers
                 }
                 c.SaveChanges();
             });
-
         }
 
         public void Rollback(Guid session)
@@ -85,7 +84,7 @@ namespace Blogs.BL.ConsistancyHandlers
             IGenericRepository<Comment> repository= null;
             try
             {
-                CreateClose(out context, out repository);
+                CreateClosure(out context, out repository);
                 return func?.Invoke(context, repository) ?? false;
             }
             catch(Exception e)
@@ -105,7 +104,7 @@ namespace Blogs.BL.ConsistancyHandlers
             IGenericRepository<Comment> repository = null;
             try
             {
-                CreateClose(out context, out repository);
+                CreateClosure(out context, out repository);
                 action?.Invoke(context, repository);
             }
             catch (Exception e)
@@ -119,7 +118,7 @@ namespace Blogs.BL.ConsistancyHandlers
             }
         }
 
-        protected void CreateClose(out DbContext context, out IGenericRepository<Comment> repository)
+        protected void CreateClosure(out DbContext context, out IGenericRepository<Comment> repository)
         {
             context = ContextFactory.CreateInstance(ConnectionFactory.CreateInstance());
             repository = RepositoryFactory.CreateInstance<Comment>(context);

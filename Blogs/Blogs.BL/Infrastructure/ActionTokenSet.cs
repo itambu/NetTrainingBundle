@@ -13,6 +13,5 @@ namespace Blogs.BL.Infrastructure
         public CancellationToken Cancel { get; set; }
         public bool IsCancelled{ get => Cancel.IsCancellationRequested; }
         public bool IsStopped { get => Stop.IsCancellationRequested; }
-
     }
 }

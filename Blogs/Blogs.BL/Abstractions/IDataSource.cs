@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Blogs.BL.Abstractions
 {
-    public interface IBlogDataSource<DTOEntity> : IDisposable, IEnumerable<DTOEntity>
+    public interface IDataSource<DTOEntity> : IDisposable, IEnumerable<DTOEntity>
     {
         void Backup();
         Guid Id { get; }

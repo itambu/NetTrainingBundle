@@ -12,11 +12,11 @@ namespace Blogs.BL.Infrastructure
     {
         private bool isDisposed;
 
-        private readonly ReaderWriterLockSlim userLocker = new ReaderWriterLockSlim();
-        private readonly ReaderWriterLockSlim blogLocker = new ReaderWriterLockSlim();
-        private readonly ReaderWriterLockSlim commentLocker = new ReaderWriterLockSlim();
+        private ReaderWriterLockSlim userLocker = new ReaderWriterLockSlim();
+        private ReaderWriterLockSlim blogLocker = new ReaderWriterLockSlim();
+        private ReaderWriterLockSlim commentLocker = new ReaderWriterLockSlim();
 
-        Dictionary<Type, ReaderWriterLockSlim> internalDictionary;
+        private Dictionary<Type, ReaderWriterLockSlim> internalDictionary;
 
         public EntityConcurrencyHandler()
         {
@@ -26,20 +26,31 @@ namespace Blogs.BL.Infrastructure
             internalDictionary.Add(typeof(Comment), new ReaderWriterLockSlim());
         }
 
-        public void Dispose()
+        protected virtual void Dispose(bool isDisposing)
         {
             if (isDisposed) return;
-
-            userLocker.Dispose();
-            blogLocker.Dispose();
-            commentLocker.Dispose();
+            if (isDisposing)
+            {
+                if (userLocker != null) userLocker.Dispose();
+                if (blogLocker != null) blogLocker.Dispose();
+                if (commentLocker != null) commentLocker.Dispose();
+                userLocker = null;
+                blogLocker = null;
+                commentLocker = null;
+                internalDictionary = null;
+            }
             isDisposed = true;
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
             GC.SuppressFinalize(this);
         }
 
         ~EntityConcurrencyHandler()
         {
-            Dispose();
+            Dispose(false);
         }
 
         public ReaderWriterLockSlim GetLocker<Entity>() where Entity: class

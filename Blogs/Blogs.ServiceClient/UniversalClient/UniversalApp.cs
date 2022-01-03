@@ -12,9 +12,9 @@ namespace Blogs.ServiceClient.UniversalClient
     public class UniversalApp : ConfiguredApp
     {
         public void Configure(
-            EventHandler<IBlogDataSource<BlogDataSourceDTO>> forFailed,
-            EventHandler<IBlogDataSource<BlogDataSourceDTO>> forCompleted,
-            EventHandler<IBlogDataSource<BlogDataSourceDTO>> forInterrupted
+            EventHandler<IDataSource<BlogDataSourceDTO>> forFailed,
+            EventHandler<IDataSource<BlogDataSourceDTO>> forCompleted,
+            EventHandler<IDataSource<BlogDataSourceDTO>> forInterrupted
             )
         {
             _folderManager.TaskFailed += forFailed;
@@ -27,9 +27,9 @@ namespace Blogs.ServiceClient.UniversalClient
         }
 
         public UniversalApp(AppOptions appOptions, 
-            EventHandler<IBlogDataSource<BlogDataSourceDTO>> forFailed,
-            EventHandler<IBlogDataSource<BlogDataSourceDTO>> forCompleted,
-            EventHandler<IBlogDataSource<BlogDataSourceDTO>> forInterrupted
+            EventHandler<IDataSource<BlogDataSourceDTO>> forFailed,
+            EventHandler<IDataSource<BlogDataSourceDTO>> forCompleted,
+            EventHandler<IDataSource<BlogDataSourceDTO>> forInterrupted
             ) : base(appOptions)
         {
             Configure(forFailed, forCompleted, forInterrupted);

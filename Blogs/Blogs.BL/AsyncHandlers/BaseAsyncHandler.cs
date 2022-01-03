@@ -34,7 +34,7 @@ namespace Blogs.BL.AsyncHandlers
             Scheduler = scheduler;
         }
 
-        public void PendingTask(IBlogDataSource<DTOEntity> source)
+        public void PendingTask(IDataSource<DTOEntity> source)
         {
             var temp = Task.Factory.StartNew(
                  () => _handler.PendingTask(source),

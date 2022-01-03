@@ -12,7 +12,7 @@ namespace Blogs.BL.DataItemHandlers
 {
     public class DataItemHandler<DTOEntity> : IDataItemHandler<DTOEntity>
     {
-        protected bool isDisposed = false;
+        private bool isDisposed = false;
 
         protected  IDTOEntityParser<DTOEntity> DTOParser;
         protected  IFetchOrInsertUnitOfWork<User> userUoW;
@@ -31,45 +31,45 @@ namespace Blogs.BL.DataItemHandlers
             this.commentUoW = commentUoW;
         }
 
-        public virtual void Dispose()
+        protected virtual void Dispose(bool isDisposing)
         {
             if (isDisposed) return;
 
-            if (userUoW!=null)
+            if (isDisposing)
             {
-                userUoW.Dispose();
-                userUoW = null;
-            }
 
-            if (blogUoW != null)
-            {
-                blogUoW.Dispose();
-                blogUoW = null;
+                if (userUoW != null)
+                {
+                    userUoW.Dispose();
+                    userUoW = null;
+                }
+
+                if (blogUoW != null)
+                {
+                    blogUoW.Dispose();
+                    blogUoW = null;
+                }
+                if (commentUoW != null)
+                {
+                    commentUoW.Dispose();
+                    commentUoW = null;
+                }
+                DTOParser = null;
             }
-            if (commentUoW != null)
-            {
-                commentUoW.Dispose();
-                commentUoW = null;
-            }
-            DTOParser = null;
             isDisposed = true;
+
+        }
+
+        public virtual void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
         }
 
         ~DataItemHandler()
         {
-            Dispose();
+            Dispose(false);
         }
-
-        //public TransactionScope BeginTransaction()
-        //{
-        //    return new TransactionScope(
-        //        TransactionScopeOption.Suppress,
-        //        new TransactionOptions()
-        //        {
-        //            IsolationLevel = System.Transactions.IsolationLevel.ReadUncommitted
-        //        },
-        //        TransactionScopeAsyncFlowOption.Enabled);
-        //}
 
         public void SaveItem(DTOEntity item)
         {
@@ -81,11 +81,21 @@ namespace Blogs.BL.DataItemHandlers
             user = DTOParser.User = userUoW.PerformAction(
                 x => x.FirstName == DTOParser.User.FirstName
                 && x.LastName == DTOParser.User.LastName,
-                new User() { FirstName = DTOParser.User.FirstName, LastName = DTOParser.User.LastName }
-                );
+                new User()
+                {
+                    FirstName = DTOParser.User.FirstName,
+                    LastName = DTOParser.User.LastName
+                });
             blog = blogUoW.PerformAction(x => x.Name == DTOParser.Blog.Name,
                 new Blog() { Name = DTOParser.Blog.Name, User = user });
-            commentUoW.PerformAction(new Comment() { Text = DTOParser.Comment.Text, User = user, Blog = blog, Session = DTOParser.Comment.Session });
+            commentUoW.PerformAction(
+                new Comment() 
+                { 
+                    Text = DTOParser.Comment.Text, 
+                    User = user, 
+                    Blog = blog, 
+                    Session = DTOParser.Comment.Session 
+                });
         }
     }
 }

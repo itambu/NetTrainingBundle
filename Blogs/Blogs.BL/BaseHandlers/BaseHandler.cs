@@ -9,11 +9,13 @@ namespace Blogs.BL.BaseHandlers
 {
     public abstract class BaseHandler
     {
-        protected bool isDisposed = false;
+        
         protected readonly CancellationToken CancelToken;
         public BaseHandler(CancellationToken cancelToken)
         {
             CancelToken = cancelToken;
         }
+
+        protected abstract void Dispose(bool isDisposing);
     }
 }

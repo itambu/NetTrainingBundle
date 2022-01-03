@@ -10,7 +10,7 @@ namespace Blogs.BL.Infrastructure
 {
     public class TokenSourceSet : IDisposable
     {
-        bool isDisposed = false;
+        private bool isDisposed = false;
         public CancellationTokenSource Stop { get; protected set; }
         public CancellationTokenSource Cancel { get; protected set; }
 
@@ -21,20 +21,26 @@ namespace Blogs.BL.Infrastructure
         }
 
         public ActionTokenSet Tokens { get => new ActionTokenSet() { Stop = Stop.Token, Cancel = Cancel.Token }; }
+        protected virtual void Dispose(bool isDisposing)
+        {
+            if (isDisposed) return;
+            if (isDisposing)
+            {
+                if (Stop != null) Stop.Dispose();
+                if (Cancel != null) Cancel.Dispose();
+            }
+            isDisposed = true;
+        }
 
         public void Dispose()
         {
-            if (isDisposed) return;
-
-            if (Stop != null) Stop.Dispose();
-            if (Cancel != null) Cancel.Dispose();
+            Dispose(true);
             GC.SuppressFinalize(this);
-            isDisposed = true;
         }
 
         ~TokenSourceSet()
         {
-            Dispose();
+            Dispose(false);
         }
     }
 }

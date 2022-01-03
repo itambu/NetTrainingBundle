@@ -10,7 +10,7 @@ namespace Blogs.BL.BusinessLogicUoWs
 {
     public class BaseUoW<Entity> : IDisposable where Entity: class
     {
-        protected bool isDisposed = false;
+        private bool isDisposed = false;
 
         public IGenericRepository<Entity> Repository { get; protected set; }
         public BaseUoW(IGenericRepository<Entity> repository)
@@ -18,22 +18,30 @@ namespace Blogs.BL.BusinessLogicUoWs
             Repository = repository;
         }
 
-        public virtual void Dispose()
+        protected virtual void Dispose(bool isDisposing)
         {
             if (isDisposed) return;
 
-            if (Repository != null)
+            if (isDisposing)
             {
-                Repository.Dispose();
-                Repository = null;
-                isDisposed = true;
+                if (Repository != null)
+                {
+                    Repository.Dispose();
+                    Repository = null;
+                }
             }
+            isDisposed = true;
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
             GC.SuppressFinalize(this);
         }
 
         ~BaseUoW()
         {
-            Dispose();
+            Dispose(false);
         }
     }
 }

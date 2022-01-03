@@ -10,7 +10,7 @@ namespace Blogs.BL.Abstractions
 {
     public interface IAsyncHandler<DTOEntity>
     {
-        void PendingTask(IBlogDataSource<DTOEntity> source);
+        void PendingTask(IDataSource<DTOEntity> source);
         Task WhenAll();
         Task StartMainProcess();
         Task WhenMainProcess();

@@ -26,6 +26,8 @@ namespace Blogs.BL.StartApp
 {
     public class ConfiguredApp : BaseApp, IAsyncApp
     {
+        private bool isDisposed = false;
+
         protected IProcessHandler<BlogDataSourceDTO> _folderManager;
         protected IProcessHandler<BlogDataSourceDTO> _eventedManager;
         protected EntityConcurrencyHandler _entityConcurrencyHandler;
@@ -38,7 +40,6 @@ namespace Blogs.BL.StartApp
 
         public ConfiguredApp(AppOptions appOptions) : base(appOptions)
         {
-            //InitConfig();
             InitWatcher();
             InitConnectionFactory();
             InitConcurrencyHandler();
@@ -183,11 +184,6 @@ namespace Blogs.BL.StartApp
                 }
             }
             base.Dispose(isDisposing);
-        }
-
-        ~ConfiguredApp()
-        {
-            Dispose();
         }
     }
 }

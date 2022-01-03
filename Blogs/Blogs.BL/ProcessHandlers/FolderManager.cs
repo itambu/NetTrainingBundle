@@ -7,11 +7,11 @@ namespace Blogs.BL.ProcessManagers
 {
     public class FolderManager<DTOEntity> : BaseFileManager<DTOEntity>, IProcessHandler<DTOEntity>, ISyncStart
     {
-        protected IEnumerable<IBlogDataSource<DTOEntity>> Provider { get; set; }
+        protected IEnumerable<IDataSource<DTOEntity>> Provider { get; set; }
 
         public FolderManager(
             IDataSourceHandleBuilder<DTOEntity> dataSourceHandleBuilder,
-            IEnumerable<IBlogDataSource<DTOEntity>> provider,
+            IEnumerable<IDataSource<DTOEntity>> provider,
             ActionTokenSet tokens
             ) : base(dataSourceHandleBuilder, tokens)
         {
@@ -23,7 +23,7 @@ namespace Blogs.BL.ProcessManagers
             StartProcess(PendingTask);
         }
 
-        public override void StartProcess(Action<IBlogDataSource<DTOEntity>> pendingTask)
+        public override void StartProcess(Action<IDataSource<DTOEntity>> pendingTask)
         {
             foreach (var c in Provider)
             {

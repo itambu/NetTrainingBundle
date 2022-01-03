@@ -8,7 +8,7 @@ namespace Blogs.BL.ProcessManagers
 {
     public class EventedFileManager<DTOEntity> : BaseFileManager<DTOEntity>, IProcessHandler<DTOEntity>, IDisposable
     {
-        protected bool isDisposed = false;
+        private bool isDisposed = false;
         protected FileSystemWatcher Watcher { get; set; }
         protected IDataSourceFactory<DTOEntity> DataSourceFactory { get; set; }
 
@@ -61,7 +61,7 @@ namespace Blogs.BL.ProcessManagers
         /// starts listening and wait. only for async call
         /// </summary>
         /// <param name="pendingTask"></param>
-        public override void StartProcess(Action<IBlogDataSource<DTOEntity>> pendingTask)
+        public override void StartProcess(Action<IDataSource<DTOEntity>> pendingTask)
         {
             ThrowIfDisposed();
             StartWatcher();
@@ -85,6 +85,12 @@ namespace Blogs.BL.ProcessManagers
                     StopListeningEvent.Dispose(); 
                     StopListeningEvent = null; 
                 }
+
+                if (Watcher!=null)
+                {
+                    Watcher.Dispose();
+                    Watcher = null;
+                }
             }
             isDisposed = true;
         }
@@ -96,7 +102,7 @@ namespace Blogs.BL.ProcessManagers
         }
         ~EventedFileManager()
         {
-            Dispose();
+            Dispose(false);
         }
     }
 }
