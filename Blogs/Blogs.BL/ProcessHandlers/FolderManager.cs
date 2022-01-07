@@ -5,15 +5,15 @@ using System.Collections.Generic;
 
 namespace Blogs.BL.ProcessManagers
 {
-    public class FolderManager<DTOEntity> : BaseFileManager<DTOEntity>, IProcessHandler<DTOEntity>, ISyncStart
+    public class FolderManager<DTOEntity> : BaseFileManager<DTOEntity>, IProcessHandler<DTOEntity>, ISyncStartable
     {
         protected IEnumerable<IDataSource<DTOEntity>> Provider { get; set; }
 
         public FolderManager(
-            IDataSourceHandleBuilder<DTOEntity> dataSourceHandleBuilder,
+            IDataSourceHandlerFactory<DTOEntity> dataSourceHandlerFactory,
             IEnumerable<IDataSource<DTOEntity>> provider,
             ActionTokenSet tokens
-            ) : base(dataSourceHandleBuilder, tokens)
+            ) : base(dataSourceHandlerFactory, tokens)
         {
             Provider = provider;
         }

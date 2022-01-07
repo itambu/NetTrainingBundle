@@ -15,23 +15,31 @@ namespace Blogs.BL.AsyncHandlers
     {
         private IProcessHandler<DTOEntity> _handler;
         private Task _mainProcessTask;
-        protected TaskScheduler Scheduler { get; set; }
-        public ActionTokenSet Tokens { get; protected set; }
-        public ILocker Locker { get; protected set; }
-        protected IProducerConsumerCollection<Task> TaskCollection { get; set; }
+        protected AsyncHandlerOptions _options;
+//        private bool isDisposed = false;
+
+        public virtual event EventHandler<IDataSource<DTOEntity>> TaskCompleted
+        {
+            add => _handler.TaskCompleted += value;
+            remove => _handler.TaskCompleted -= value;
+        }
+        public virtual event EventHandler<IDataSource<DTOEntity>> TaskFailed
+        {
+            add => _handler.TaskFailed += value;
+            remove => _handler.TaskFailed -= value;
+        }
+        public virtual event EventHandler<IDataSource<DTOEntity>> TaskInterrupted
+        {
+            add => _handler.TaskInterrupted += value;
+            remove => _handler.TaskInterrupted -= value;
+        }
 
         public BaseAsyncHandler(
             IProcessHandler<DTOEntity> handler,
-            IProducerConsumerCollection<Task> taskCollection,
-            ActionTokenSet tokens,
-            ILocker locker,
-            TaskScheduler scheduler)
+            AsyncHandlerOptions options)
         {
             _handler = handler;
-            TaskCollection = taskCollection;
-            Tokens = tokens;
-            Locker = locker;
-            Scheduler = scheduler;
+            _options = options;
         }
 
         public void PendingTask(IDataSource<DTOEntity> source)
@@ -40,29 +48,11 @@ namespace Blogs.BL.AsyncHandlers
                  () => _handler.PendingTask(source),
                  CancellationToken.None,
                  TaskCreationOptions.None,
-                 Scheduler);
+                 _options.Scheduler);
 
-            if (temp == null || !TaskCollection.TryAdd(temp))
+            if (temp == null || !_options.TaskCollection.TryAdd(temp))
             {
                 throw new InvalidOperationException("cannot pending task");
-            }
-        }
-
-        protected Task MainTask 
-        {
-            set
-            {
-                try
-                {
-                    if (Locker.TryLockForStart())
-                    {
-                        _mainProcessTask = value;
-                    }
-                }
-                finally
-                {
-                    Locker.ReleaseLockForStart();
-                }
             }
         }
 
@@ -71,9 +61,10 @@ namespace Blogs.BL.AsyncHandlers
             try
             {
                 return Task.Factory.StartNew(
-                    () => MainTask = Task.Factory.StartNew(() => _handler.StartProcess(PendingTask))
-                    .ContinueWith(t => MainTask = null)
-                    );
+                    () => Interlocked.Exchange(
+                        ref _mainProcessTask,
+                        Task.Factory.StartNew(() => _handler.StartProcess(PendingTask))))
+                    .ContinueWith(t => Interlocked.Exchange(ref _mainProcessTask, null));
             }
             catch (Exception e)
             {
@@ -83,12 +74,30 @@ namespace Blogs.BL.AsyncHandlers
 
         public Task WhenAll()
         {
-            return Task.WhenAll(TaskCollection);
+            return Task.WhenAll(_options.TaskCollection);
         }
 
         public Task WhenMainProcess()
         {
-            return _mainProcessTask ?? Task.Delay(0);
+            Task temp = _mainProcessTask;
+            Interlocked.Exchange(ref temp, _mainProcessTask);
+            return temp ?? Task.CompletedTask;
         }
+
+        //public void Dispose(bool isDisposing)
+        //{
+        //    if (isDisposed) return;
+        //    if (isDisposing)
+        //    {
+        //        TaskCompleted = null;
+        //    }
+        //    isDisposed = true;
+        //}
+
+        //public void Dispose()
+        //{
+        //    Dispose(true);
+        //    GC.SuppressFinalize(this);
+        //}
     }
 }

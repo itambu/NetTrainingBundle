@@ -12,9 +12,20 @@ namespace Blogs.DAL.BlogContextFactories
 {
     public class BlogContextFactory : IBlogContextFactory
     {
-        public DbContext CreateInstance(DbConnection connection, bool contextOwnConnection = true)
+        private IConnectionFactory _connectionFactory;
+        protected bool OpenOnCreate { get; set; } = false;
+
+        public DbContext CreateInstance(DbConnection connection=null, bool contextOwnConnection = true)
         {
-            return new BlogDbContext(connection, contextOwnConnection);
+            var temp = (connection == null) ? _connectionFactory.CreateInstance(OpenOnCreate)
+                : connection;
+            if (temp == null) throw new InvalidOperationException("No connection object can be substituted");
+            return new BlogDbContext(temp, contextOwnConnection);
+        }
+
+        public BlogContextFactory(IConnectionFactory connectionFactory=null)
+        {
+            _connectionFactory = connectionFactory;
         }
     }
 }

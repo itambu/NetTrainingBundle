@@ -10,6 +10,6 @@ namespace Blogs.DAL.Abstractions
 {
     public interface IBlogContextFactory
     {
-        DbContext CreateInstance(DbConnection connection, bool contextOwnConnection = true);
+        DbContext CreateInstance(DbConnection connection = null, bool contextOwnConnection = true);
     }
 }

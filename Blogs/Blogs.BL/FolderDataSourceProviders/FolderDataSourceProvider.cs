@@ -16,12 +16,11 @@ namespace Blogs.BL.FolderDataSourceProviders
     public class FolderDataSourceProvider : IEnumerable<IDataSource<BlogDataSourceDTO>>
     {
         private AppFolderOptions _appFolderOptions;
-        private IFileManager _fileManager;
-
-        public FolderDataSourceProvider(AppFolderOptions appFolderOptions, IFileManager fileManager)
+        private IDataSourceFactory<BlogDataSourceDTO> _dataSourceFactory;
+        public FolderDataSourceProvider(AppFolderOptions appFolderOptions, IDataSourceFactory<BlogDataSourceDTO> dataSourceFactory)
         {
             _appFolderOptions = appFolderOptions;
-            _fileManager = fileManager;
+            _dataSourceFactory = dataSourceFactory;
         }
 
         public IEnumerator<IDataSource<BlogDataSourceDTO>> GetEnumerator()
@@ -29,7 +28,7 @@ namespace Blogs.BL.FolderDataSourceProviders
             var temp = Directory.GetFiles(_appFolderOptions.Source,_appFolderOptions.Pattern);
             foreach (var f in temp)
             {
-                yield return new BlogDataSource(f, _appFolderOptions.Target, _fileManager);
+                yield return _dataSourceFactory.CreateInstance(f);
             }
         }
         IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();

@@ -4,11 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Blogs.BL.Infrastructure
+namespace Blogs.BL.Abstractions
 {
-    public interface ILocker
+    public interface IStopEventBinding
     {
-        bool TryLockForStart();
-        void ReleaseLockForStart();
+        void OnStopHandler(object sender, EventArgs args);
     }
 }

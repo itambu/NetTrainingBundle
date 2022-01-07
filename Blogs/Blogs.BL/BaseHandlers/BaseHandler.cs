@@ -7,15 +7,15 @@ using System.Threading.Tasks;
 
 namespace Blogs.BL.BaseHandlers
 {
-    public abstract class BaseHandler
-    {
+    //public abstract class BaseHandler
+    //{
         
-        protected readonly CancellationToken CancelToken;
-        public BaseHandler(CancellationToken cancelToken)
-        {
-            CancelToken = cancelToken;
-        }
+        
+    //    public BaseHandler(CancellationToken cancelToken)
+    //    {
 
-        protected abstract void Dispose(bool isDisposing);
-    }
+    //    }
+
+    //    protected abstract void Dispose(bool isDisposing);
+    //}
 }

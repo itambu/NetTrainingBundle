@@ -6,29 +6,28 @@ using System.Threading;
 
 namespace Blogs.BL.ProcessManagers
 {
-    public class EventedFileManager<DTOEntity> : BaseFileManager<DTOEntity>, IProcessHandler<DTOEntity>, IDisposable
+    public class EventedFileManager<DTOEntity> : BaseFileManager<DTOEntity>, IProcessHandler<DTOEntity>, ISyncStartable //,IDisposable, IStopEventBinding
     {
         private bool isDisposed = false;
-        protected FileSystemWatcher Watcher { get; set; }
         protected IDataSourceFactory<DTOEntity> DataSourceFactory { get; set; }
 
-        protected AutoResetEvent StopListeningEvent = new AutoResetEvent(false);
+        protected TaskBlocker _taskBlocker;
 
         public EventedFileManager(
-              IDataSourceHandleBuilder<DTOEntity> dataSourceHandleBuilder,
-              ActionTokenSet tokens,
+              IDataSourceHandlerFactory<DTOEntity> dataSourceHandlerFactory,
               IDataSourceFactory<DTOEntity> dataSourceFactory,
-              FileSystemWatcher watcher
-              ) : base(dataSourceHandleBuilder,  tokens)
+              ActionTokenSet tokens
+              ) : base(dataSourceHandlerFactory, tokens)
         {
-            Watcher = watcher;
             DataSourceFactory = dataSourceFactory;
         }
 
-        /// <summary>
-        /// starts listening in sync model app
-        /// </summary>
-        /// 
+        public EventedFileManager<DTOEntity> Bind(TaskBlocker taskBlocker)
+        {
+            _taskBlocker = taskBlocker;
+            _taskBlocker.ActionConnector += Watcher_Created;
+            return this;
+        }
 
         protected void ThrowIfDisposed()
         {
@@ -39,8 +38,12 @@ namespace Blogs.BL.ProcessManagers
         public void Start()
         {
             ThrowIfDisposed();
-            StartWatcher();
         }
+
+        //public EventedFileManager<DTOEntity> Bind()
+        //{
+        //    return this;
+        //}
 
         private void Watcher_Created(object sender, FileSystemEventArgs e)
         {
@@ -48,13 +51,11 @@ namespace Blogs.BL.ProcessManagers
             this.PendingTask(DataSourceFactory.CreateInstance(e.FullPath));
         }
 
-        public void OnStopHandler(object sender, EventArgs args)
-        {
-            ThrowIfDisposed();
-            Watcher.EnableRaisingEvents = false;
-            Watcher.Created -= Watcher_Created;
-            StopListeningEvent.Set();
-        }
+        //public void OnStopHandler(object sender, EventArgs args)
+        //{
+        //    ThrowIfDisposed();
+        //    _appController.ProviderStateChanged -= Watcher_Created;
+        //}
 
 
         /// <summary>
@@ -64,45 +65,47 @@ namespace Blogs.BL.ProcessManagers
         public override void StartProcess(Action<IDataSource<DTOEntity>> pendingTask)
         {
             ThrowIfDisposed();
-            StartWatcher();
-            StopListeningEvent.WaitOne();
-        }
-
-        protected void StartWatcher()
-        {
-            ThrowIfDisposed();
-            Watcher.Created += Watcher_Created;
-            Watcher.EnableRaisingEvents = true;
-        }
-
-        protected virtual void Dispose(bool isDisposing)
-        {
-            if (isDisposed) return;
-            if (isDisposing)
+            if (_taskBlocker != null)
             {
-                if (StopListeningEvent != null) 
-                { 
-                    StopListeningEvent.Dispose(); 
-                    StopListeningEvent = null; 
-                }
-
-                if (Watcher!=null)
-                {
-                    Watcher.Dispose();
-                    Watcher = null;
-                }
+                _taskBlocker.Start();
+                _taskBlocker.WaitForStop();
             }
-            isDisposed = true;
         }
 
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-        ~EventedFileManager()
-        {
-            Dispose(false);
-        }
+        //protected void StartWatcher()
+        //{
+        //    ThrowIfDisposed();
+        //    Watcher.EnableRaisingEvents = true;
+        //}
+
+        //protected virtual void Dispose(bool isDisposing)
+        //{
+        //    if (isDisposed) return;
+        //    if (isDisposing)
+        //    {
+        //        if (StopListeningEvent != null) 
+        //        { 
+        //            StopListeningEvent.Dispose(); 
+        //            StopListeningEvent = null; 
+        //        }
+
+        //        if (Watcher!=null)
+        //        {
+        //            Watcher.Dispose();
+        //            Watcher = null;
+        //        }
+        //    }
+        //    isDisposed = true;
+        //}
+
+        //public void Dispose()
+        //{
+        //    Dispose(true);
+        //    GC.SuppressFinalize(this);
+        //}
+        //~EventedFileManager()
+        //{
+        //    Dispose(false);
+        //}
     }
 }

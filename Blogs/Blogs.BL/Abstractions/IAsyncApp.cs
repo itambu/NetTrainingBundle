@@ -6,12 +6,12 @@ using System.Threading.Tasks;
 
 namespace Blogs.BL.Abstractions
 {
-    public interface IAsyncApp : IDisposable
+    public interface IAsyncApp<DTOEntity> : ITaskEventable<DTOEntity>, IDisposable
     {
         Task CancelAsync();
         Task StopAsync();
         Task StartAsync();
-        event EventHandler OnStop;
-        event EventHandler OnCancel;
+        event EventHandler OnStopped;
+        event EventHandler OnCancelled;
     }
 }

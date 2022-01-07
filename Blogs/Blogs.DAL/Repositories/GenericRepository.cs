@@ -12,7 +12,7 @@ namespace Blogs.DAL.Repositories
 {
     public class GenericRepository<T> : IGenericRepository<T> where T : class
     {
-        protected bool isDisposed = false;
+        private bool isDisposed = false;
 
         protected DbContext Context;
         public GenericRepository(DbContext dbContext)
@@ -45,13 +45,14 @@ namespace Blogs.DAL.Repositories
         protected virtual void Dispose(bool isDisposing)
         {
             if (isDisposed) return;
-
-            if (Context != null)
+            if (isDisposing)
             {
-                Context.Dispose();
-                Context = null;
+                if (Context != null)
+                {
+                    Context.Dispose();
+                    Context = null;
+                }
             }
-
             isDisposed = true;
         }
 
@@ -63,7 +64,7 @@ namespace Blogs.DAL.Repositories
 
         ~GenericRepository()
         {
-            Dispose();
+            Dispose(false);
         }
 
         public T First(Expression<Func<T, bool>> filter)

@@ -6,8 +6,7 @@ using System.Threading.Tasks;
 
 namespace Blogs.BL.Abstractions
 {
-    public interface IDataSourceHandler : IDisposable
+    public interface IDataSourceHandler : ISyncStartable, IDisposable
     {
-        void Run();
     }
 }

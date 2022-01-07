@@ -6,13 +6,9 @@ using System.Threading.Tasks;
 
 namespace Blogs.BL.Abstractions
 {
-    public interface IProcessHandler<DTOEntity>
+    public interface IProcessHandler<DTOEntity> : ITaskEventable<DTOEntity>
     {
         void StartProcess(Action<IDataSource<DTOEntity>> pendingTask);
         void PendingTask(IDataSource<DTOEntity> source);
-
-        public event EventHandler<IDataSource<DTOEntity>> TaskCompleted;
-        public event EventHandler<IDataSource<DTOEntity>> TaskFailed;
-        public event EventHandler<IDataSource<DTOEntity>> TaskInterrupted;
     }
 }

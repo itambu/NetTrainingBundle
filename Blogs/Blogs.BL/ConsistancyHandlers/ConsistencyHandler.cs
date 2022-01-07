@@ -16,18 +16,14 @@ namespace Blogs.BL.ConsistancyHandlers
     {
         private IBlogContextFactory ContextFactory { get; set; }
         private IRepositoryFactory RepositoryFactory { get; set; }
-        private IConnectionFactory ConnectionFactory { get; set; }
-        
 
         public ConsistencyHandler(
-            IConnectionFactory connectionFactory,
             IBlogContextFactory contextFactory,
             IRepositoryFactory repositoryFactory
             )
         {
             ContextFactory = contextFactory;
             RepositoryFactory = repositoryFactory;
-            ConnectionFactory = connectionFactory;
         }
 
         public bool IsConsisted
@@ -120,7 +116,7 @@ namespace Blogs.BL.ConsistancyHandlers
 
         protected void CreateClosure(out DbContext context, out IGenericRepository<Comment> repository)
         {
-            context = ContextFactory.CreateInstance(ConnectionFactory.CreateInstance());
+            context = ContextFactory.CreateInstance();
             repository = RepositoryFactory.CreateInstance<Comment>(context);
         }
     }

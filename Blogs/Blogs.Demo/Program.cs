@@ -11,19 +11,19 @@ namespace Blogs.Demo
     {
         static void Main(string[] args)
         {
-            IConfiguration _config = (new ConfigurationBuilder())
-               .SetBasePath(System.IO.Directory.GetCurrentDirectory())
-               .AddJsonFile("appsettings.json").Build();
+            //IConfiguration _config = (new ConfigurationBuilder())
+            //   .SetBasePath(System.IO.Directory.GetCurrentDirectory())
+            //   .AddJsonFile("appsettings.json").Build();
 
-            using (IAsyncApp app = new ConsoleClientApp(_config.GetSection("AppOptions").Get<AppOptions>()))
-            {
-                Console.Write("Starting...");
-                app.StartAsync().Wait();
-                Console.WriteLine("listening");
-                Console.ReadKey(true);
-                app.StopAsync().Wait();
-                Console.WriteLine("Stopped");
-            }
+            //using (IAsyncApp app = new ConsoleClientApp(_config.GetSection("AppOptions").Get<AppOptions>()))
+            //{
+            //    Console.Write("Starting...");
+            //    app.StartAsync().Wait();
+            //    Console.WriteLine("listening");
+            //    Console.ReadKey(true);
+            //    app.StopAsync().Wait();
+            //    Console.WriteLine("Stopped");
+            //}
         }
     }
 }

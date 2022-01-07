@@ -9,16 +9,16 @@ namespace Blogs.BL.ProcessManagers
     public abstract class BaseFileManager<DTOEntity>
     {
         protected ActionTokenSet Tokens { get; private set; }
-        protected IDataSourceHandleBuilder<DTOEntity> DataSourceHandlerBuilder { get; set; }
+        protected IDataSourceHandlerFactory<DTOEntity> DataSourceHandlerFactory { get; set; }
         
         public event EventHandler<IDataSource<DTOEntity>> TaskCompleted;
         public event EventHandler<IDataSource<DTOEntity>> TaskFailed;
         public event EventHandler<IDataSource<DTOEntity>> TaskInterrupted;
 
-        public BaseFileManager(IDataSourceHandleBuilder<DTOEntity> dataSourceHandleBuilder,
+        public BaseFileManager(IDataSourceHandlerFactory<DTOEntity> dataSourceHandlerFactory,
             ActionTokenSet tokens)
         {
-            DataSourceHandlerBuilder = dataSourceHandleBuilder;
+            DataSourceHandlerFactory = dataSourceHandlerFactory;
             Tokens = tokens;
         }
 
@@ -54,9 +54,9 @@ namespace Blogs.BL.ProcessManagers
             {
                 try
                 {
-                    using (var handler = DataSourceHandlerBuilder.Build(source))
+                    using (var handler = DataSourceHandlerFactory.CreateInstance(source))
                     {
-                        handler.Run();
+                        handler.Start();
                     }
                 }
                 catch (HandlerException)

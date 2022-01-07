@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace Blogs.BL.Abstractions
 {
-    public interface ISyncStart
-    {
-        void Start();
-    }
+    //public interface ISyncStart
+    //{
+    //    void Start();
+    //}
 }

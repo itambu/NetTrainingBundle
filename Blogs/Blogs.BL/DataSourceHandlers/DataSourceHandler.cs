@@ -1,22 +1,16 @@
 ﻿using Blogs.BL.Abstractions;
 using Blogs.BL.BaseHandlers;
-using Blogs.Persistence.Models;
 using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Data.Entity.Infrastructure;
-using System.IO;
-using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Transactions;
 
 namespace Blogs.BL.DataSourceHandlers
 {
-    public class DataSourceHandler<DTOEntity> : BaseHandler,  IDataSourceHandler
+    public class DataSourceHandler<DTOEntity> : IDataSourceHandler
     {
         private bool isDisposed = false;
+
+        protected readonly CancellationToken CancelToken;
         protected IDataSource<DTOEntity> DataSource { get; private set; }
         protected IDataItemHandler<DTOEntity> ItemHandler { get; private set; }
 
@@ -27,25 +21,26 @@ namespace Blogs.BL.DataSourceHandlers
             IDataItemHandler<DTOEntity> itemHandler, 
             CancellationToken cancelToken,
             IConsistencyHandler consistancyHandler
-            ) : base(cancelToken)
+            ) 
         {
             DataSource = dataSource;
             ItemHandler = itemHandler;
             ConsistancyHandler = consistancyHandler;
+            CancelToken = cancelToken;
         }
 
         protected TransactionScope CreateTransaction()
         {
             return new TransactionScope(
-                                TransactionScopeOption.RequiresNew,
-                                new TransactionOptions()
-                                {
-                                    IsolationLevel = System.Transactions.IsolationLevel.ReadCommitted
-                                },
-                                TransactionScopeAsyncFlowOption.Enabled);
+                TransactionScopeOption.RequiresNew,
+                new TransactionOptions()
+                {
+                    IsolationLevel = IsolationLevel.ReadCommitted
+                },
+                TransactionScopeAsyncFlowOption.Enabled);
         }
 
-        public void Run( )
+        public void Start( )
         {
             try
             {
@@ -81,7 +76,7 @@ namespace Blogs.BL.DataSourceHandlers
             }
         }
 
-        protected override void Dispose(bool isDisposing)
+        protected virtual void Dispose(bool isDisposing)
         {
             if (isDisposed) return;
 

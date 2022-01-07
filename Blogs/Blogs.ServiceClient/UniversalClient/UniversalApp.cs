@@ -9,31 +9,27 @@ using System.Threading.Tasks;
 
 namespace Blogs.ServiceClient.UniversalClient
 {
-    public class UniversalApp : ConfiguredApp
-    {
-        public void Configure(
-            EventHandler<IDataSource<BlogDataSourceDTO>> forFailed,
-            EventHandler<IDataSource<BlogDataSourceDTO>> forCompleted,
-            EventHandler<IDataSource<BlogDataSourceDTO>> forInterrupted
-            )
-        {
-            _folderManager.TaskFailed += forFailed;
-            _folderManager.TaskCompleted += forCompleted;
-            _folderManager.TaskInterrupted += forInterrupted;
+    //public class UniversalApp : ConfiguredApp
+    //{
+    //    public virtual void Configure(
+    //        EventHandler<IDataSource<BlogDataSourceDTO>> forFailed,
+    //        EventHandler<IDataSource<BlogDataSourceDTO>> forCompleted,
+    //        EventHandler<IDataSource<BlogDataSourceDTO>> forInterrupted
+    //        )
+    //    {
+    //        TaskFailed += forFailed;
+    //        TaskCompleted += forCompleted;
+    //        TaskInterrupted += forInterrupted;
+    //    }
 
-            _eventedManager.TaskFailed += forFailed;
-            _eventedManager.TaskCompleted += forCompleted;
-            _eventedManager.TaskInterrupted += forInterrupted;
-        }
+    //    public UniversalApp(AppOptions appOptions, 
+    //        EventHandler<IDataSource<BlogDataSourceDTO>> forFailed,
+    //        EventHandler<IDataSource<BlogDataSourceDTO>> forCompleted,
+    //        EventHandler<IDataSource<BlogDataSourceDTO>> forInterrupted
+    //        ) : base(appOptions)
+    //    {
+    //        Configure(forFailed, forCompleted, forInterrupted);
+    //    }
 
-        public UniversalApp(AppOptions appOptions, 
-            EventHandler<IDataSource<BlogDataSourceDTO>> forFailed,
-            EventHandler<IDataSource<BlogDataSourceDTO>> forCompleted,
-            EventHandler<IDataSource<BlogDataSourceDTO>> forInterrupted
-            ) : base(appOptions)
-        {
-            Configure(forFailed, forCompleted, forInterrupted);
-        }
-
-    }
+    //}
 }

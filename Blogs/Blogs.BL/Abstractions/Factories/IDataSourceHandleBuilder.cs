@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace Blogs.BL.Abstractions
 {
-    public interface IDataSourceHandleBuilder<DTOEntity>
-    {
-        IDataSourceHandler Build(IDataSource<DTOEntity> source);
-    }
+    //public interface IDataSourceHandleBuilder<DTOEntity>
+    //{
+    //    IDataSourceHandler Build(IDataSource<DTOEntity> source);
+    //}
 }

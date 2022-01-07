@@ -8,13 +8,11 @@ using System.Threading.Tasks;
 
 namespace Blogs.BL.Abstractions
 {
-    public interface IAsyncHandler<DTOEntity>
+    public interface IAsyncHandler<DTOEntity> : ITaskEventable<DTOEntity>
     {
         void PendingTask(IDataSource<DTOEntity> source);
         Task WhenAll();
         Task StartMainProcess();
         Task WhenMainProcess();
-        ActionTokenSet Tokens { get; }
-        ILocker Locker { get; }
     }
 }
