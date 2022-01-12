@@ -1,12 +1,9 @@
 ﻿using Blogs.DAL.Abstractions;
 using System;
 using System.Collections.Generic;
-using System.Data.Common;
 using System.Data.Entity;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Blogs.DAL.Repositories
 {
@@ -74,7 +71,7 @@ namespace Blogs.DAL.Repositories
 
         public IEnumerable<T> Get(Expression<Func<T, bool>> filter = null)
         {
-            return filter!=null? Context.Set<T>().Where(filter) : Context.Set<T>();
+            return filter != null ? Context.Set<T>().Where(filter) : Context.Set<T>();
         }
 
         public void Remove(T item)

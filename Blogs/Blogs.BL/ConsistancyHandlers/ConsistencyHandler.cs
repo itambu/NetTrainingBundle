@@ -1,13 +1,10 @@
 ﻿using Blogs.BL.Abstractions;
-using Blogs.BL.BaseHandlers;
+using Blogs.BL.Infrastructure;
 using Blogs.DAL.Abstractions;
 using Blogs.Persistence.Models;
 using System;
-using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Blogs.BL.ConsistancyHandlers
 {
@@ -65,7 +62,7 @@ namespace Blogs.BL.ConsistancyHandlers
         {
             UseClosure((c, r) =>
             {
-                var results = r.Get(x => x.Session != null );
+                var results = r.Get(x => x.Session != null);
                 foreach (var e in results)
                 {
                     r.Remove(e);
@@ -74,16 +71,16 @@ namespace Blogs.BL.ConsistancyHandlers
             });
         }
 
-        protected bool UseClosure( Func<DbContext, IGenericRepository<Comment>, bool> func  )
+        protected bool UseClosure(Func<DbContext, IGenericRepository<Comment>, bool> func)
         {
             DbContext context = null;
-            IGenericRepository<Comment> repository= null;
+            IGenericRepository<Comment> repository = null;
             try
             {
                 CreateClosure(out context, out repository);
                 return func?.Invoke(context, repository) ?? false;
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 throw new HandlerException(e);
             }

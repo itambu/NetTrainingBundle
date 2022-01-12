@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
+﻿using System.Threading;
 
 namespace Blogs.BL.Infrastructure
 {
@@ -11,7 +6,7 @@ namespace Blogs.BL.Infrastructure
     {
         public CancellationToken Stop { get; set; }
         public CancellationToken Cancel { get; set; }
-        public bool IsCancelled{ get => Cancel.IsCancellationRequested; }
+        public bool IsCancelled { get => Cancel.IsCancellationRequested; }
         public bool IsStopped { get => Stop.IsCancellationRequested; }
     }
 }

@@ -1,11 +1,4 @@
-﻿using System;
-using Blogs.BL.Abstractions;
-using Blogs.BL.Infrastructure;
-using Blogs.BL.StartApp;
-using Blogs.Demo.ConsoleApp;
-using Microsoft.Extensions.Configuration;
-
-namespace Blogs.Demo
+﻿namespace Blogs.Demo
 {
     class Program
     {

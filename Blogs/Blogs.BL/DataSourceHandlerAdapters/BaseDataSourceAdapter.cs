@@ -1,25 +1,20 @@
 ﻿using Blogs.BL.Abstractions;
-using Blogs.BL.BaseHandlers;
 using Blogs.BL.Infrastructure;
 using System;
 using System.Threading;
 
 namespace Blogs.BL.ProcessManagers
 {
-    public abstract class BaseFileManager<DTOEntity>
+    public class BaseDataSourceAdapter<DTOEntity> : IDataSourceHandlerAdapter<DTOEntity>
     {
-        protected ActionTokenSet Tokens { get; private set; }
         protected IDataSourceHandlerFactory<DTOEntity> DataSourceHandlerFactory { get; set; }
-        
         public event EventHandler<IDataSource<DTOEntity>> TaskCompleted;
         public event EventHandler<IDataSource<DTOEntity>> TaskFailed;
         public event EventHandler<IDataSource<DTOEntity>> TaskInterrupted;
 
-        public BaseFileManager(IDataSourceHandlerFactory<DTOEntity> dataSourceHandlerFactory,
-            ActionTokenSet tokens)
+        public BaseDataSourceAdapter(IDataSourceHandlerFactory<DTOEntity> dataSourceHandlerFactory)
         {
             DataSourceHandlerFactory = dataSourceHandlerFactory;
-            Tokens = tokens;
         }
 
         protected virtual void OnTaskCompleted(object sender, IDataSource<DTOEntity> source)
@@ -28,14 +23,12 @@ namespace Blogs.BL.ProcessManagers
             Interlocked.Exchange(ref temp, TaskCompleted);
             temp?.Invoke(sender, source);
         }
-
         protected virtual void OnTaskInterrupted(object sender, IDataSource<DTOEntity> source)
         {
             EventHandler<IDataSource<DTOEntity>> temp = null;
             Interlocked.Exchange(ref temp, TaskInterrupted);
             temp?.Invoke(sender, source);
         }
-
         protected virtual void OnTaskFailed(object sender, IDataSource<DTOEntity> source)
         {
             EventHandler<IDataSource<DTOEntity>> temp = null;
@@ -43,25 +36,21 @@ namespace Blogs.BL.ProcessManagers
             temp?.Invoke(sender, source);
         }
 
-        public abstract void StartProcess(Action<IDataSource<DTOEntity>> pendingTask);
-
-        public virtual void PendingTask(
-            IDataSource<DTOEntity> source
-            )
+        public virtual void PendingTask(object sender, IDataSource<DTOEntity> dataSource)
         {
             TaskCompletionStatus status = TaskCompletionStatus.Success;
-            using (source)
+            using (dataSource)
             {
                 try
                 {
-                    using (var handler = DataSourceHandlerFactory.CreateInstance(source))
+                    using (var handler = DataSourceHandlerFactory.CreateInstance(dataSource))
                     {
                         handler.Start();
                     }
                 }
                 catch (HandlerException)
                 {
-                    status =  TaskCompletionStatus.Failed;
+                    status = TaskCompletionStatus.Failed;
                 }
                 catch (OperationCanceledException)
                 {
@@ -72,7 +61,7 @@ namespace Blogs.BL.ProcessManagers
                     status = TaskCompletionStatus.Failed;
                 }
             }
-            Callback(status, source);
+            Callback(status, dataSource);
         }
 
         public virtual void Callback(TaskCompletionStatus status, IDataSource<DTOEntity> source)

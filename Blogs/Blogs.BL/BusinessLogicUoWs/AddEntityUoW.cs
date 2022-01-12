@@ -1,10 +1,5 @@
 ﻿using Blogs.BL.Abstractions;
 using Blogs.DAL.Abstractions;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Blogs.BL.BusinessLogicUoWs
 {

@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace Blogs.BL.Abstractions
 {
-    public interface IStopEventBinding
+    public interface IDataSourceProceedable<DTOEntity>
     {
-        void OnStopHandler(object sender, EventArgs args);
+        void PendingTask(object sender, IDataSource<DTOEntity> source);
     }
 }

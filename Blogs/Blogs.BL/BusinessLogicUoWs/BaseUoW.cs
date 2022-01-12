@@ -1,14 +1,9 @@
 ﻿using Blogs.DAL.Abstractions;
 using System;
-using System.Collections.Generic;
-using System.Data.Entity;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Blogs.BL.BusinessLogicUoWs
 {
-    public class BaseUoW<Entity> : IDisposable where Entity: class
+    public class BaseUoW<Entity> : IDisposable where Entity : class
     {
         private bool isDisposed = false;
 

@@ -2,10 +2,6 @@
 using Blogs.BL.Infrastructure;
 using Blogs.DAL.Abstractions;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace Blogs.BL.StartApp
@@ -14,8 +10,9 @@ namespace Blogs.BL.StartApp
     {
         private bool isDisposed = false;
         protected IAsyncControlPanel<DTOEntity> _controlPanel;
-        public event EventHandler OnStopped;
-        public event EventHandler OnCancelled;
+        public event EventHandler Stopped;
+        public event EventHandler Cancelled;
+        public event EventHandler Started;
 
         protected AppOptions _appOptions;
 
@@ -41,52 +38,50 @@ namespace Blogs.BL.StartApp
                 throw new InvalidOperationException("object was disposed");
         }
 
+        public virtual void OnStartedEvent(object sender, EventArgs args)
+        {
+            Started?.Invoke(this, args);
+        }
+
         protected virtual void OnStopEvent(object sender, EventArgs args)
         {
-            OnStopped?.Invoke(this, args);
+            Stopped?.Invoke(this, args);
         }
 
         protected virtual void OnCancelEvent(object sender, EventArgs args)
         {
-            OnCancelled?.Invoke(this, args);
+            Cancelled?.Invoke(this, args);
         }
 
-        public Task CancelAsync()
+        public Task Cancel()
         {
             ThrowIfDisposed();
-            _controlPanel.SignalCancel().Wait();
+            _controlPanel.Cancel().Wait();
             OnCancelEvent(this, null);
             return Task.CompletedTask;
         }
 
-        public Task StartAsync()
+        public Task Start()
         {
             ThrowIfDisposed();
-            return _controlPanel.StartAsync();
+            return _controlPanel.Start()
+                .ContinueWith(t =>
+                {
+                    if (t.Exception == null)
+                    {
+                        OnStartedEvent(this, null);
+                    }
+                    else
+                        throw t.Exception;
+                });
         }
 
-        public Task StopAsync()
+        public Task Stop()
         {
             ThrowIfDisposed();
-            _controlPanel.SignalStop().Wait();
+            _controlPanel.Stop().Wait();
             OnStopEvent(this, null);
             return Task.CompletedTask;
-        }
-
-        public virtual event EventHandler<IDataSource<DTOEntity>> TaskCompleted
-        {
-            add => _controlPanel.TaskCompleted += value;
-            remove => _controlPanel.TaskCompleted -= value;
-        }
-        public virtual event EventHandler<IDataSource<DTOEntity>> TaskFailed
-        {
-            add => _controlPanel.TaskFailed += value;
-            remove => _controlPanel.TaskFailed -= value;
-        }
-        public virtual event EventHandler<IDataSource<DTOEntity>> TaskInterrupted
-        {
-            add => _controlPanel.TaskInterrupted += value;
-            remove => _controlPanel.TaskInterrupted -= value;
         }
 
         protected virtual void Dispose(bool isDisposing)

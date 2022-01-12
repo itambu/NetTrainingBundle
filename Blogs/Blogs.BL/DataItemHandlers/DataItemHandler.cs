@@ -1,12 +1,6 @@
 ﻿using Blogs.BL.Abstractions;
 using Blogs.Persistence.Models;
 using System;
-using System.Collections.Generic;
-using System.Data.Common;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Transactions;
 
 namespace Blogs.BL.DataItemHandlers
 {
@@ -14,13 +8,13 @@ namespace Blogs.BL.DataItemHandlers
     {
         private bool isDisposed = false;
 
-        protected  IDTOEntityParser<DTOEntity> DTOParser;
-        protected  IFetchOrInsertUnitOfWork<User> userUoW;
-        protected  IFetchOrInsertUnitOfWork<Blog> blogUoW;
-        protected  IAddEntityUoW<Comment> commentUoW;
+        protected IDTOEntityParser<DTOEntity> DTOParser;
+        protected IFetchOrInsertUnitOfWork<User> userUoW;
+        protected IFetchOrInsertUnitOfWork<Blog> blogUoW;
+        protected IAddEntityUoW<Comment> commentUoW;
 
         public DataItemHandler(
-            IDTOEntityParser<DTOEntity> parser, 
+            IDTOEntityParser<DTOEntity> parser,
             IFetchOrInsertUnitOfWork<User> userUoW,
             IFetchOrInsertUnitOfWork<Blog> blogUoW,
             IAddEntityUoW<Comment> commentUoW)
@@ -89,12 +83,12 @@ namespace Blogs.BL.DataItemHandlers
             blog = blogUoW.PerformAction(x => x.Name == DTOParser.Blog.Name,
                 new Blog() { Name = DTOParser.Blog.Name, User = user });
             commentUoW.PerformAction(
-                new Comment() 
-                { 
-                    Text = DTOParser.Comment.Text, 
-                    User = user, 
-                    Blog = blog, 
-                    Session = DTOParser.Comment.Session 
+                new Comment()
+                {
+                    Text = DTOParser.Comment.Text,
+                    User = user,
+                    Blog = blog,
+                    Session = DTOParser.Comment.Session
                 });
         }
     }

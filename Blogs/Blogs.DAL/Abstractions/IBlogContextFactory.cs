@@ -1,10 +1,5 @@
-﻿using Blogs.Persistence.Contexts;
-
-using System;
-using System.Collections.Generic;
-using System.Data.Common;
+﻿using System.Data.Common;
 using System.Data.Entity;
-using System.Text;
 
 namespace Blogs.DAL.Abstractions
 {

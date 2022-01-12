@@ -16,5 +16,10 @@
     <ProjectReference Include="..\Blogs.Persistence\Blogs.Persistence.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="BaseHandlers\" />
+    <Folder Include="FolderDataSourceProviders\" />
+  </ItemGroup>
+
 
 </Project>

@@ -1,12 +1,8 @@
 ﻿using Blogs.DAL.Abstractions;
 using Blogs.Persistence.Contexts;
 using System;
-using System.Collections.Generic;
 using System.Data.Common;
 using System.Data.Entity;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Blogs.DAL.BlogContextFactories
 {
@@ -15,7 +11,7 @@ namespace Blogs.DAL.BlogContextFactories
         private IConnectionFactory _connectionFactory;
         protected bool OpenOnCreate { get; set; } = false;
 
-        public DbContext CreateInstance(DbConnection connection=null, bool contextOwnConnection = true)
+        public DbContext CreateInstance(DbConnection connection = null, bool contextOwnConnection = true)
         {
             var temp = (connection == null) ? _connectionFactory.CreateInstance(OpenOnCreate)
                 : connection;
@@ -23,7 +19,7 @@ namespace Blogs.DAL.BlogContextFactories
             return new BlogDbContext(temp, contextOwnConnection);
         }
 
-        public BlogContextFactory(IConnectionFactory connectionFactory=null)
+        public BlogContextFactory(IConnectionFactory connectionFactory = null)
         {
             _connectionFactory = connectionFactory;
         }

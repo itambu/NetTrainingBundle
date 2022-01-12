@@ -1,13 +1,9 @@
 ﻿using Blogs.BL.Abstractions;
 using ChinhDo.Transactions;
-using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Blogs.BL.BlogDataSources
 {
@@ -56,7 +52,7 @@ namespace Blogs.BL.BlogDataSources
                         reader = null;
                     }
                     _fileManager = null;
-                    
+
                 }
                 isDisposed = true;
             }

@@ -1,16 +1,10 @@
 ﻿using Blogs.BL.Abstractions;
 using Blogs.BL.Abstractions.Factories;
 using Blogs.BL.BusinessLogicUoWs;
-using Blogs.BL.DataItemHandlers;
 using Blogs.BL.Infrastructure;
 using Blogs.DAL.Abstractions;
 using Blogs.Persistence.Models;
-using System;
-using System.Collections.Generic;
 using System.Data.Entity;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Blogs.BL.DataItemHandlers
 {

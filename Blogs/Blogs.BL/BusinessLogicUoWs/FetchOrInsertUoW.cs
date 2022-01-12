@@ -1,14 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data.Entity.Infrastructure;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-using Blogs.BL.Abstractions;
+﻿using Blogs.BL.Abstractions;
 using Blogs.BL.Infrastructure;
 using Blogs.DAL.Abstractions;
+using System;
+using System.Linq.Expressions;
+using System.Threading;
 
 namespace Blogs.BL.BusinessLogicUoWs
 {

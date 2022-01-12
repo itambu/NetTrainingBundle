@@ -2,11 +2,6 @@
 using Blogs.BL.BlogDataSources;
 using Blogs.BL.Infrastructure;
 using ChinhDo.Transactions;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Blogs.BL.DataSourceFactories
 {

@@ -1,34 +1,33 @@
 ﻿using Blogs.BL.Abstractions;
+using Blogs.BL.Infrastructure;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
-namespace Blogs.BL.Infrastructure
+namespace Blogs.BL.ControlPanels
 {
-    public class AsyncControlPanel<DTOEntity> : IDisposable, IAsyncControlPanel<DTOEntity>
+    public class AsyncControlPanel<DTOEntity> : IAsyncControlPanel<DTOEntity>
     {
         private bool isDisposed = false;
         protected Task _stoppingTask;
         public TokenSourceSet TokenSources { get; private set; }
-        public TaskBlocker TaskBlocker { get; private set; }
         protected int _timeout;
-        protected ICollection<IAsyncHandler<DTOEntity>> AsyncHandlers { get; set; }
+        public event EventHandler StopRequested;
+        protected ICollection<IAsyncAdapter<DTOEntity>> AsyncHandlers { get; set; }
 
         public AsyncControlPanel(
-            ICollection<IAsyncHandler<DTOEntity>> collection,
+            ICollection<IAsyncAdapter<DTOEntity>> collection,
             TokenSourceSet tokenSourceSet,
-            TaskBlocker taskBlocker,
             int timeout)
         {
             TokenSources = tokenSourceSet;
-            TaskBlocker = taskBlocker;
             AsyncHandlers = collection;
             _timeout = timeout;
         }
 
-        public IAsyncControlPanel<DTOEntity> Add(IAsyncHandler<DTOEntity> handler)
+        public IAsyncControlPanel<DTOEntity> Add(IAsyncAdapter<DTOEntity> handler)
         {
             AsyncHandlers.Add(handler);
             return this;
@@ -40,13 +39,13 @@ namespace Blogs.BL.Infrastructure
                 throw new InvalidOperationException("object was disposed");
         }
 
-        public Task SignalStop()
+        public Task Stop()
         {
             ThrowIfDisposed();
             if (!TokenSources.Stop.IsCancellationRequested)
             {
-                TaskBlocker.Stop();
                 TokenSources.Stop.Cancel();
+                OnStopRequested(this, null);
                 Task.WhenAll(AsyncHandlers.Select(x => x.WhenMainProcess())).Wait();
                 return _stoppingTask = Task.WhenAll(AsyncHandlers.Select(x => x.WhenAll()));
             }
@@ -55,12 +54,20 @@ namespace Blogs.BL.Infrastructure
                 return Task.CompletedTask;
             }
         }
-        public Task SignalCancel()
+
+        protected virtual void OnStopRequested(object sender, EventArgs args)
+        {
+            var temp = StopRequested;
+            Interlocked.Exchange(ref temp, StopRequested);
+            temp?.Invoke(sender, args);
+        }
+
+        public Task Cancel()
         {
             ThrowIfDisposed();
             if (!TokenSources.Cancel.IsCancellationRequested)
             {
-                SignalStop();
+                Stop();
                 if (!_stoppingTask.Wait(_timeout))
                 {
                     TokenSources.Cancel.Cancel();
@@ -73,26 +80,10 @@ namespace Blogs.BL.Infrastructure
             }
         }
 
-        public Task StartAsync()
+        public Task Start()
         {
             ThrowIfDisposed();
-            return Task.WhenAll(AsyncHandlers.Select(x => x.StartMainProcess()));
-        }
-
-        public virtual event EventHandler<IDataSource<DTOEntity>> TaskCompleted
-        {
-            add { foreach (var i in AsyncHandlers) { i.TaskCompleted += value; }; }
-            remove { foreach (var i in AsyncHandlers) { i.TaskCompleted -= value; }; }
-        }
-        public virtual event EventHandler<IDataSource<DTOEntity>> TaskFailed
-        {
-            add { foreach (var i in AsyncHandlers) { i.TaskFailed += value; }; }
-            remove { foreach (var i in AsyncHandlers) { i.TaskFailed -= value; }; }
-        }
-        public virtual event EventHandler<IDataSource<DTOEntity>> TaskInterrupted
-        {
-            add { foreach (var i in AsyncHandlers) { i.TaskInterrupted += value; }; }
-            remove { foreach (var i in AsyncHandlers) { i.TaskInterrupted -= value; }; }
+            return Task.WhenAll(AsyncHandlers.Select(x => x.Start()));
         }
 
         public void Dispose()
@@ -115,12 +106,6 @@ namespace Blogs.BL.Infrastructure
                 {
                     TokenSources.Dispose();
                     TokenSources = null;
-                }
-
-                if (TaskBlocker != null)
-                {
-                    TaskBlocker.Dispose();
-                    TaskBlocker = null;
                 }
 
                 foreach (var i in AsyncHandlers)

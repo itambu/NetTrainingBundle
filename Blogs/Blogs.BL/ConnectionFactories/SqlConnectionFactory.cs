@@ -1,13 +1,6 @@
-﻿using Blogs.BL.Abstractions;
-using Blogs.DAL.Abstractions;
-using Microsoft.Extensions.Configuration;
-using System;
-using System.Collections.Generic;
+﻿using Blogs.DAL.Abstractions;
 using System.Data.Common;
 using System.Data.SqlClient;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Blogs.BL.ConnectionFactories
 {

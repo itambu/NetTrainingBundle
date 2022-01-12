@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-using Blogs.BL.Abstractions;
+﻿using Blogs.BL.Abstractions;
 using Blogs.BL.Abstractions.Factories;
+using System.Threading;
 
 namespace Blogs.BL.DataSourceHandlers
 {
@@ -18,14 +13,14 @@ namespace Blogs.BL.DataSourceHandlers
         public IDataSourceHandler CreateInstance(IDataSource<BlogDataSourceDTO> source)
         {
             return new DataSourceHandler<BlogDataSourceDTO>(
-                source, 
+                source,
                 _dataItemHandlerFactory.CreateInstance(),
-                _cancelToken, 
-                _consistencyHandler) ;
+                _cancelToken,
+                _consistencyHandler);
         }
 
         public BlogDataSourceHandlerFactory(
-            IDataItemHandlerFactory<BlogDataSourceDTO> _dataItemHandlerFactory, 
+            IDataItemHandlerFactory<BlogDataSourceDTO> _dataItemHandlerFactory,
             IConsistencyHandler consistencyHandler,
             CancellationToken cancelToken
             )

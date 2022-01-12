@@ -1,10 +1,6 @@
 ﻿using Blogs.BL.Abstractions;
 using Blogs.Persistence.Models;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Blogs.BL.DTOEntityParsers
 {
@@ -18,14 +14,14 @@ namespace Blogs.BL.DTOEntityParsers
         {
             var name = item.UserName.Split(" ");
 
-            if (name.Length!=2)
+            if (name.Length != 2)
             {
                 throw new InvalidOperationException("Cannot split username");
             }
 
             User = new User() { FirstName = name[0], LastName = name[1] };
-            Blog = new Blog() { User = User, Name=item.BlogName };
-            Comment = new Comment() { Blog = Blog, User = User, Text=item.CommentTopic, Session =  item.Session};
+            Blog = new Blog() { User = User, Name = item.BlogName };
+            Comment = new Comment() { Blog = Blog, User = User, Text = item.CommentTopic, Session = item.Session };
         }
     }
 }

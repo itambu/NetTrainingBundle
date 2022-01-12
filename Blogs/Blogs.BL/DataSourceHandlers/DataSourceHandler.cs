@@ -1,5 +1,5 @@
 ﻿using Blogs.BL.Abstractions;
-using Blogs.BL.BaseHandlers;
+using Blogs.BL.Infrastructure;
 using System;
 using System.Threading;
 using System.Transactions;
@@ -17,11 +17,11 @@ namespace Blogs.BL.DataSourceHandlers
         protected IConsistencyHandler ConsistancyHandler { get; private set; }
 
         public DataSourceHandler(
-            IDataSource<DTOEntity> dataSource, 
-            IDataItemHandler<DTOEntity> itemHandler, 
+            IDataSource<DTOEntity> dataSource,
+            IDataItemHandler<DTOEntity> itemHandler,
             CancellationToken cancelToken,
             IConsistencyHandler consistancyHandler
-            ) 
+            )
         {
             DataSource = dataSource;
             ItemHandler = itemHandler;
@@ -40,7 +40,7 @@ namespace Blogs.BL.DataSourceHandlers
                 TransactionScopeAsyncFlowOption.Enabled);
         }
 
-        public void Start( )
+        public void Start()
         {
             try
             {

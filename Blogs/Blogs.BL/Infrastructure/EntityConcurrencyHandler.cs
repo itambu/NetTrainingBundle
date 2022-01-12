@@ -1,10 +1,7 @@
 ﻿using Blogs.Persistence.Models;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace Blogs.BL.Infrastructure
 {
@@ -53,7 +50,7 @@ namespace Blogs.BL.Infrastructure
             Dispose(false);
         }
 
-        public ReaderWriterLockSlim GetLocker<Entity>() where Entity: class
+        public ReaderWriterLockSlim GetLocker<Entity>() where Entity : class
         {
             return internalDictionary[typeof(Entity)];
         }

@@ -1,17 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Blogs.BL.Abstractions
 {
-    public interface IAsyncApp<DTOEntity> : ITaskEventable<DTOEntity>, IDisposable
+    public interface IAsyncApp<DTOEntity> : IDisposable, IAsyncStartable, IAsyncStoppable, IAsyncCancelable
     {
-        Task CancelAsync();
-        Task StopAsync();
-        Task StartAsync();
-        event EventHandler OnStopped;
-        event EventHandler OnCancelled;
+        event EventHandler Started;
+        event EventHandler Stopped;
+        event EventHandler Cancelled;
     }
 }
