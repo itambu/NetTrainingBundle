@@ -2,6 +2,8 @@
 
 @using PagedList.Mvc;
 
+
+
 <link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" />
 
 @{
@@ -54,6 +56,9 @@
                 success: function (data, textStatus, XHR) {
                     jQuery("#pagedlist").html(data);
                 },
+                fail: function () {
+                    jQuery("#pagedlist").html().val("");
+                }
                 dataType: "html"
             }
         );

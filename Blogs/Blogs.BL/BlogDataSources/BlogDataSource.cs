@@ -16,7 +16,7 @@ namespace Blogs.BL.BlogDataSources
         private IFileManager _fileManager;
         private readonly Guid _id = Guid.NewGuid();
         public Guid Id => _id;
-        private StreamReader reader;
+        private StreamReader _reader;
         public BlogDataSource(string sourceFileName, string targetPath, IFileManager fileManager)
         {
             _sourceFileName = sourceFileName;
@@ -24,7 +24,7 @@ namespace Blogs.BL.BlogDataSources
             _fileManager = fileManager;
         }
 
-        public void Backup()
+        public void Close()
         {
             ValidateState();
             var filename = String.Concat(TargetPath, Path.GetFileName(_sourceFileName));
@@ -46,10 +46,10 @@ namespace Blogs.BL.BlogDataSources
             {
                 if (isDisposing)
                 {
-                    if (reader != null)
+                    if (_reader != null)
                     {
-                        reader.Dispose();
-                        reader = null;
+                        _reader.Dispose();
+                        _reader = null;
                     }
                     _fileManager = null;
 
@@ -72,10 +72,10 @@ namespace Blogs.BL.BlogDataSources
         public IEnumerator<BlogDataSourceDTO> GetEnumerator()
         {
             ValidateState();
-            using (reader = new StreamReader(_sourceFileName))
+            using (_reader = new StreamReader(_sourceFileName))
             {
 
-                string currentLine = reader.ReadLine();
+                string currentLine = _reader.ReadLine();
                 while (currentLine != null)
                 {
                     ValidateState();
@@ -88,7 +88,7 @@ namespace Blogs.BL.BlogDataSources
                         Session = Id
                     };
                     yield return current;
-                    currentLine = reader.ReadLine();
+                    currentLine = _reader.ReadLine();
                 }
             }
         }

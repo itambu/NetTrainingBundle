@@ -5,7 +5,7 @@ namespace Blogs.BL.Abstractions
 {
     public interface IDataSource<DTOEntity> : IDisposable, IEnumerable<DTOEntity>
     {
-        void Backup();
+        void Close();
         Guid Id { get; }
     }
 }

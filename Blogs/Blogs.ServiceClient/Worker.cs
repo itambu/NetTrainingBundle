@@ -35,6 +35,8 @@ namespace Blogs.ServiceClient
 
         EntityConcurrencyHandler _entityConcurrencyHandler;
 
+//        public Worker() : this( Services.Resolve<ILogger<Worker>>(),  )
+
         public Worker(ILogger<Worker> logger, IOptions<AppOptions> appOptions)
         {
             _logger = logger;

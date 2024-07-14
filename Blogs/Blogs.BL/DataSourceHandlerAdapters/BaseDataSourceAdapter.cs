@@ -39,27 +39,20 @@ namespace Blogs.BL.ProcessManagers
         public virtual void PendingTask(object sender, IDataSource<DTOEntity> dataSource)
         {
             TaskCompletionStatus status = TaskCompletionStatus.Success;
-            using (dataSource)
+            try
             {
-                try
+                using (var handler = DataSourceHandlerFactory.CreateInstance(dataSource))
                 {
-                    using (var handler = DataSourceHandlerFactory.CreateInstance(dataSource))
-                    {
-                        handler.Start();
-                    }
+                    handler.Start();
                 }
-                catch (HandlerException)
-                {
-                    status = TaskCompletionStatus.Failed;
-                }
-                catch (OperationCanceledException)
-                {
-                    status = TaskCompletionStatus.Interrupted;
-                }
-                catch (Exception)
-                {
-                    status = TaskCompletionStatus.Failed;
-                }
+            }
+            catch (OperationCanceledException)
+            {
+                status = TaskCompletionStatus.Interrupted;
+            }
+            catch (Exception)
+            {
+                status = TaskCompletionStatus.Failed;
             }
             Callback(status, dataSource);
         }

@@ -29,7 +29,7 @@ namespace Blogs.BL.DataSourceHandlers
             CancelToken = cancelToken;
         }
 
-        protected TransactionScope CreateTransaction()
+        protected virtual TransactionScope CreateTransaction()
         {
             return new TransactionScope(
                 TransactionScopeOption.RequiresNew,
@@ -44,35 +44,47 @@ namespace Blogs.BL.DataSourceHandlers
         {
             try
             {
-                foreach (var item in DataSource)
-                {
-                    CancelToken.ThrowIfCancellationRequested();
-                    ItemHandler.SaveItem(item);
-                }
-                using (TransactionScope scope = CreateTransaction())
-                {
-                    try
-                    {
-                        ConsistancyHandler.Commit(DataSource.Id);
-                        DataSource.Backup();
-                        scope.Complete();
-                    }
-                    catch (Exception e)
-                    {
-                        ConsistancyHandler.Rollback(DataSource.Id);
-                        throw new HandlerException(e);
-                    }
-                }
+                ProceedAllDataItems();
+                AfterDataSourceItemsProceeded();
             }
             catch (OperationCanceledException)
             {
-                ConsistancyHandler.Rollback(DataSource.Id);
+                HandleError();
                 throw;
             }
             catch (Exception e)
             {
-                ConsistancyHandler.Rollback(DataSource.Id);
+                HandleError();
                 throw new HandlerException(e);
+            }
+        }
+
+        protected virtual void HandleError()
+        {
+            ConsistancyHandler.Rollback(DataSource.Id);
+        }
+
+        protected virtual void AfterDataSourceItemsProceeded()
+        {
+            using (TransactionScope scope = CreateTransaction())
+            {
+                ApplyActionOnDataSource();
+                scope.Complete();
+            }
+        }
+
+        protected virtual void ApplyActionOnDataSource()
+        {
+            ConsistancyHandler.Commit(DataSource.Id);
+            DataSource.Close();
+        }
+
+        protected virtual void ProceedAllDataItems()
+        {
+            foreach (var item in DataSource)
+            {
+                CancelToken.ThrowIfCancellationRequested();
+                ItemHandler.SaveItem(item);
             }
         }
 
@@ -86,8 +98,8 @@ namespace Blogs.BL.DataSourceHandlers
                 {
                     ItemHandler.Dispose();
                     ItemHandler = null;
-                    isDisposed = true;
                 }
+                ConsistancyHandler = null;
             }
             isDisposed = true;
         }
@@ -97,6 +109,7 @@ namespace Blogs.BL.DataSourceHandlers
             Dispose(true);
             GC.SuppressFinalize(this);
         }
+
         ~DataSourceHandler()
         {
             Dispose(false);

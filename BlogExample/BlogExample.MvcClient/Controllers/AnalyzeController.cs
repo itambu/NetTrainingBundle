@@ -74,6 +74,7 @@ namespace BlogExample.MvcClient.Controllers
         [HttpPost]
         public ActionResult ApplyFilter(CommentPerDayFilterViewModel model)
         {
+            TryValidateModel(model);
             Validate(model);
             if (ModelState.IsValid)
             {

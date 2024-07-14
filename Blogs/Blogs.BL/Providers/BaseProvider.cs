@@ -29,10 +29,16 @@ namespace Blogs.BL.Providers
         protected abstract void StartAction();
         protected virtual void OnNew(object sender, IDataSource<DTOEntity> dataSource)
         {
-            var temp = New;
-            Interlocked.Exchange(ref temp, New);
-            temp?.Invoke(sender, dataSource);
+            try
+            {
+                var temp = New;
+                Interlocked.Exchange(ref temp, New);
+                temp?.Invoke(sender, dataSource);
+            }
+            finally
+            {
+                if (dataSource != null) dataSource.Dispose();
+            }
         }
-
     }
 }

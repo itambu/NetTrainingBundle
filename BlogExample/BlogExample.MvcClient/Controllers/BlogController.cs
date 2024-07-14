@@ -36,6 +36,7 @@ namespace BlogExample.MvcClient.Controllers
         {
             try 
             {
+                //this.Request.
                 IPagedList<BlogSimpleViewModel> model;
                 using (var context = ContextFactory.CreateInstance())
                 {
@@ -50,6 +51,11 @@ namespace BlogExample.MvcClient.Controllers
                             .OrderByDescending(x => x.Created)
                             .ToPagedList(page ?? 1, 5);
                 }
+                //
+                // Context -> EF models -> BL model -> ViewModel -> View(viewModel)-> Client
+                // Client->viewModel-> BL model -> EF Model-> Context
+                ViewBag.Filter = null;
+
                 return PartialView("PagedList", model);
             }
             catch
@@ -170,6 +176,7 @@ namespace BlogExample.MvcClient.Controllers
 
         protected void ValidateEntityPermission(DbContext context, Blog blog)
         {
+            
             var userId = HttpContext.GetViewModel<AvatarViewModel>().Id;
             var user = new GenericRepository<User>(context).Get().Single(x => x.Id == userId);
             if (!Locator.Get<IPermissionProvider>().HasPermission<Blog, User>(blog,

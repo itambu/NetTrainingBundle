@@ -78,7 +78,7 @@
     </TypeIdentifier>
   </Interface>
   <Interface Name="Blogs.BL.Abstractions.IDataSourceProceedable&lt;DTOEntity&gt;">
-    <Position X="0.5" Y="2.25" Width="1.5" />
+    <Position X="0.5" Y="2.25" Width="2" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAAAAAAA=</HashCode>
       <FileName>Abstractions\IDataSourceProceedable.cs</FileName>
